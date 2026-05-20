@@ -1,5 +1,4 @@
-# Vyrox Landing
-
+# Vyrox WWW
 ![Licence](https://img.shields.io/badge/licence-proprietary-lightgrey?style=flat-square)
 ![Build](https://img.shields.io/badge/build-alpha-6a737d?style=flat-square)
 ![Version](https://img.shields.io/badge/version-v0.1.0--alpha-005cc5?style=flat-square)
