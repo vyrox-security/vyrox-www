@@ -1,6 +1,7 @@
 # Node / frontend build outputs
 node_modules/
 .next/
+out/
 dist/
 build/
 .turbo/
