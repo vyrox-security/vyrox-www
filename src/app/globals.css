@@ -1,73 +1,435 @@
 @import "tailwindcss";
 
+/* =============================================================
+   VYROX DESIGN SYSTEM
+   "We extract the signal" — editorial brutalism, noir tactical
+   ============================================================= */
+
 @theme {
-  --color-onyx: #0A0A0A;
-  --color-navy: #0A1128;
-  --color-charcoal: #1C1C21;
-  --color-void: #030303;
-  
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  /* Surfaces — void (pre-signal) and bone (post-signal) */
+  --color-void:   #050505;
+  --color-pitch:  #0A0A0B;
+  --color-graphite: #14141A;
+  --color-ash:    #1F1F26;
+
+  --color-bone:   #F2EAD8;       /* warm paper — the "signal" surface */
+  --color-paper:  #F6F0E1;
+  --color-linen:  #ECE3CC;
+  --color-ink:    #0E0A05;
+  --color-graphite-dark: #2A2118;
+  --color-clay:   #6B5E48;
+
+  /* Signal accents — refined ember palette */
+  --color-ember:    #E8462E;     /* primary signal */
+  --color-ember-2:  #FF6A3D;
+  --color-ember-3:  #FF9156;
+  --color-amber:    #C9892F;
+  --color-gold:     #D4AC5D;
+  --color-rust:     #8B2A12;
+  --color-marrow:   #FFE6B0;     /* warm highlight */
+
+  /* Fonts */
+  --font-display: var(--font-display), "Cambria", "Times New Roman", serif;
+  --font-body:    var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 @layer base {
   :root {
-    --background: #030303;
-    --foreground: #F3F4F6;
+    --bg: var(--color-void);
+    --fg: #F4EFE3;
+
+    /* Editorial spacing rhythm */
+    --rhythm: 8px;
+
+    /* Motion easings — for CSS-only motion */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: geometricPrecision;
+    font-feature-settings: "ss01", "ss02", "cv11";
+    /* fraunces optical sizing — let the variable axis do its job */
+    font-optical-sizing: auto;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-weight: 400;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: var(--color-ember);
+    color: var(--color-bone);
+  }
+
+  /* Hide scrollbar on Webkit/Firefox while keeping function */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(232, 70, 46, 0.25);
+    border-radius: 0;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(232, 70, 46, 0.5);
   }
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  overflow-x: hidden;
+/* =============================================================
+   TYPOGRAPHY — editorial display + technical body
+   ============================================================= */
+
+.font-display { font-family: var(--font-display); font-optical-sizing: auto; }
+.font-body    { font-family: var(--font-body); }
+.font-mono    { font-family: var(--font-mono); font-feature-settings: "ss01", "ss02", "zero", "calt"; }
+
+/* Display weight modulation for variable serif */
+.display-wonk {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-style: italic;
+  font-weight: 400;
 }
 
-.gradient-ember {
-  background: linear-gradient(135deg, #FF6200 0%, #FF8C00 100%);
+.display-tight {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 0;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
 }
 
-.gradient-amber {
-  background: linear-gradient(135deg, #FF8C00 0%, #FFAB40 100%);
+/* Editorial small-caps label */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 
-.gradient-void {
-  background: radial-gradient(circle at center, #1C1C21 0%, #030303 100%);
+/* =============================================================
+   TEXTURES — atmospheric depth
+   ============================================================= */
+
+.bg-grain {
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px;
 }
 
-.bg-grid-pattern {
-  background-image: 
-    linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
+.bg-grid-void {
+  background-image:
+    linear-gradient(to right, rgba(255, 230, 176, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 230, 176, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
 }
 
-/* Premium Glassmorphism */
-.glass-panel {
-  background: rgba(10, 10, 12, 0.4);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+.bg-grid-bone {
+  background-image:
+    linear-gradient(to right, rgba(14, 10, 5, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(14, 10, 5, 0.05) 1px, transparent 1px);
+  background-size: 56px 56px;
 }
 
-.glass-panel-inner {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 8px;
+/* Etched bone surface — letterpress texture */
+.surface-bone {
+  background:
+    radial-gradient(ellipse at 50% 0%, #FAF2DD 0%, transparent 60%),
+    radial-gradient(ellipse at 100% 100%, #E8DDC2 0%, transparent 50%),
+    linear-gradient(180deg, #F2EAD8 0%, #ECE3CC 100%);
+  color: var(--color-ink);
 }
 
-.text-gradient-silver {
-  background: linear-gradient(to right, #FFFFFF, #A1A1AA);
+.surface-void {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(232, 70, 46, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(13, 11, 8, 1) 0%, transparent 70%),
+    var(--color-void);
+}
+
+/* Diagonal cinema bars — editorial rule */
+.rule-diagonal {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    transparent 6px,
+    currentColor 6px,
+    currentColor 7px
+  );
+}
+
+/* =============================================================
+   COMPONENTS — buttons, chips, terminal frames
+   ============================================================= */
+
+.btn-ember {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.95rem 1.6rem;
+  background: var(--color-ember);
+  color: var(--color-bone);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-ember);
+  border-radius: 0;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 0.4s var(--ease-out-expo);
+  box-shadow:
+    0 0 0 1px rgba(232, 70, 46, 0.0),
+    0 10px 30px -10px rgba(232, 70, 46, 0.5);
+}
+.btn-ember::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #FF8157 0%, var(--color-ember) 50%, #B82A12 100%);
+  z-index: -1;
+  transform: translateY(101%);
+  transition: transform 0.5s var(--ease-out-expo);
+}
+.btn-ember:hover::before { transform: translateY(0); }
+.btn-ember:hover { transform: translateY(-2px); }
+.btn-ember:active { transform: translateY(0); }
+
+.btn-ghost {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.95rem 1.6rem;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid rgba(244, 239, 227, 0.25);
+  border-radius: 0;
+  cursor: pointer;
+  transition: border-color 0.4s var(--ease-out-expo), color 0.4s ease, background 0.4s ease;
+}
+.btn-ghost:hover {
+  border-color: var(--color-marrow);
+  color: var(--color-marrow);
+  background: rgba(255, 230, 176, 0.04);
+}
+
+.btn-ghost-bone {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.95rem 1.6rem;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border: 1px solid rgba(14, 10, 5, 0.2);
+  cursor: pointer;
+  transition: all 0.4s var(--ease-out-expo);
+}
+.btn-ghost-bone:hover {
+  border-color: var(--color-ember);
+  color: var(--color-ember);
+  background: rgba(232, 70, 46, 0.05);
+}
+
+/* Editorial chip / status pill */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  color: rgba(244, 239, 227, 0.55);
+}
+.chip-bone {
+  color: rgba(14, 10, 5, 0.45);
+}
+.chip-ember {
+  color: var(--color-ember);
+  border-color: rgba(232, 70, 46, 0.4);
+}
+
+/* Terminal window chrome */
+.term-window {
+  background: #07060A;
+  border: 1px solid rgba(255, 230, 176, 0.08);
+  border-radius: 0;
+  box-shadow:
+    0 1px 0 0 rgba(255, 230, 176, 0.04) inset,
+    0 30px 80px -20px rgba(0, 0, 0, 0.7);
+}
+.term-window-bone {
+  background: #FBF6E7;
+  border: 1px solid rgba(14, 10, 5, 0.1);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.5) inset,
+    0 18px 50px -12px rgba(14, 10, 5, 0.18);
+}
+
+/* =============================================================
+   UTILITIES — text gradients, hover lifts
+   ============================================================= */
+
+.text-gradient-ember {
+  background: linear-gradient(120deg, #FF9156 0%, var(--color-ember) 45%, #B82A12 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-@keyframes slideDown {
-  0% { transform: translateY(-100%); opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { transform: translateY(300%); opacity: 0; }
+.text-gradient-bone {
+  background: linear-gradient(180deg, #FFFCF5 0%, #C9BFA8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-ink {
+  background: linear-gradient(180deg, #0E0A05 0%, #6B5E48 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Smoldering ember — bright crown fading into deep rust shadow.
+   Used for the "noise" headline: reads as wasted heat / unrefined fire,
+   contrasting with the .text-gradient-ember (full-bright) used on signal. */
+.text-gradient-smolder {
+  background:
+    linear-gradient(180deg,
+      #FFB36A 0%,
+      #FF6A3D 28%,
+      #E8462E 55%,
+      #8B2A12 82%,
+      #3A0A03 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter:
+    drop-shadow(0 0 28px rgba(232, 70, 46, 0.18))
+    drop-shadow(0 0 60px rgba(232, 70, 46, 0.12));
+}
+
+.hover-magnetic {
+  transition: transform 0.5s var(--ease-out-expo);
+  will-change: transform;
+}
+
+.hover-lift {
+  transition: transform 0.5s var(--ease-out-expo), box-shadow 0.5s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-3px);
+}
+
+/* =============================================================
+   GSAP REVEAL SCAFFOLDING — initial state hidden, JS reveals
+   ============================================================= */
+
+.reveal-char,
+.reveal-word,
+.reveal-line,
+.reveal-fade {
+  opacity: 0;
+}
+.reveal-y {
+  opacity: 0;
+  transform: translate3d(0, 36px, 0);
+}
+.reveal-clip {
+  clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+}
+
+/* Don't animate if JS is off */
+.no-js .reveal-char,
+.no-js .reveal-word,
+.no-js .reveal-line,
+.no-js .reveal-fade,
+.no-js .reveal-y {
+  opacity: 1;
+  transform: none;
+}
+
+/* Marquee track (used in Signal section) */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 28s linear infinite;
+}
+
+/* Scanline shimmer — used as accent */
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(2000%); }
+}
+.scanline::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(232, 70, 46, 0.5) 50%, transparent 100%);
+  pointer-events: none;
+  animation: scan 4s linear infinite;
+  mix-blend-mode: screen;
+}
+
+/* Reduced motion overrides — flatten everything */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-char,
+  .reveal-word,
+  .reveal-line,
+  .reveal-fade,
+  .reveal-y {
+    opacity: 1;
+    transform: none;
+  }
+  .reveal-clip {
+    clip-path: none;
+  }
 }
