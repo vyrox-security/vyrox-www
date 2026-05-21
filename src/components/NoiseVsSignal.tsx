@@ -4,6 +4,7 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { splitText } from "@/lib/text-split";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -11,94 +12,271 @@ if (typeof window !== "undefined") {
 
 export default function NoiseVsSignal() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const maskRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
+  const noiseRef = useRef<HTMLDivElement>(null);
+  const signalRef = useRef<HTMLDivElement>(null);
+  const noiseHeadRef = useRef<HTMLHeadingElement>(null);
+  const signalHeadRef = useRef<HTMLHeadingElement>(null);
+  const signalSubRef = useRef<HTMLParagraphElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const marqueeRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(() => {
-    if (!containerRef.current || !maskRef.current) return;
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
 
-    // The scroll animation expanding the mask
-    gsap.to(maskRef.current, {
-      clipPath: "circle(150vw at 50% 50%)",
-      ease: "none",
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top top",
-        end: "+=200%",
-        scrub: true,
-        pin: true,
-      }
-    });
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        if (!containerRef.current) return;
 
-    // Subtle parallax on the text inside the mask for a feeling of depth
-    if (textRef.current) {
-      gsap.fromTo(textRef.current, 
-        { scale: 0.8, opacity: 0 },
-        { 
-          scale: 1, 
-          opacity: 1, 
-          ease: "none",
+        const noiseSplit = noiseHeadRef.current
+          ? splitText(noiseHeadRef.current, ["chars", "words"])
+          : null;
+        const signalSplit = signalHeadRef.current
+          ? splitText(signalHeadRef.current, ["chars", "words"])
+          : null;
+        const subSplit = signalSubRef.current
+          ? splitText(signalSubRef.current, ["words"])
+          : null;
+
+        // Initial: noise visible, signal masked to zero
+        gsap.set(signalRef.current, {
+          clipPath: "circle(0% at 50% 60%)",
+        });
+        if (signalSplit) gsap.set(signalSplit.chars, { yPercent: 110, opacity: 0 });
+        if (subSplit) gsap.set(subSplit.words, { yPercent: 60, opacity: 0 });
+        gsap.set(statsRef.current?.children ?? [], { opacity: 0, y: 16 });
+
+        // 1) Noise headline reveals on enter
+        if (noiseSplit) {
+          gsap.fromTo(
+            noiseSplit.chars,
+            { yPercent: 100, opacity: 0 },
+            {
+              yPercent: 0,
+              opacity: 1,
+              duration: 1,
+              stagger: 0.012,
+              ease: "expo.out",
+              scrollTrigger: {
+                trigger: containerRef.current,
+                start: "top 80%",
+                toggleActions: "play none none reverse",
+              },
+            }
+          );
+        }
+
+        // 2) Pin + scrub the void → bone reveal
+        const reveal = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top top",
-            end: "+=150%",
-            scrub: true,
+            end: "+=180%",
+            scrub: 1,
+            pin: true,
+            pinSpacing: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        reveal
+          .to(
+            signalRef.current,
+            { clipPath: "circle(150% at 50% 50%)", ease: "power2.inOut", duration: 1.2 },
+            0
+          )
+          .to(noiseRef.current, { opacity: 0.18, scale: 0.92, ease: "power2.out", duration: 1.2 }, 0)
+          // signal headline rises into view after the mask is mostly open
+          .to(
+            signalSplit?.chars ?? [],
+            {
+              yPercent: 0,
+              opacity: 1,
+              duration: 0.6,
+              ease: "expo.out",
+              stagger: { each: 0.018, from: "start" },
+            },
+            0.55
+          )
+          .to(
+            subSplit?.words ?? [],
+            { yPercent: 0, opacity: 1, duration: 0.5, ease: "power3.out", stagger: 0.02 },
+            0.85
+          )
+          .to(
+            statsRef.current?.children ?? [],
+            { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.05 },
+            0.95
+          );
+
+        // 3) Marquee fades in once signal is dominant
+        gsap.fromTo(
+          marqueeRef.current,
+          { opacity: 0 },
+          {
+            opacity: 1,
+            duration: 0.6,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top -40%",
+              end: "top -60%",
+              scrub: true,
+            },
           }
-        }
-      );
-    }
-  }, { scope: containerRef });
+        );
+
+        return () => {
+          noiseSplit?.revert();
+          signalSplit?.revert();
+          subSplit?.revert();
+        };
+      });
+
+      // Reduced motion — show signal layer fully
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(signalRef.current, { clipPath: "none" });
+        gsap.set(noiseRef.current, { opacity: 0.2 });
+      });
+
+      return () => mm.revert();
+    },
+    { scope: containerRef }
+  );
 
   return (
-    <section ref={containerRef} className="relative w-full h-[300vh] bg-[#030303] z-10">
-      <div className="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center">
-        
-        {/* Layer 1: NOISE (Base Layer) */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#050505]">
-          {/* Subtle noise texture */}
-          <div className="absolute inset-0 opacity-[0.05] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj4KICA8ZmlsdGVyIGlkPSJub2lzZSI+CiAgICA8ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC42NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPgogIDwvZmlsdGVyPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNub2lzZSkiIG9wYWNpdHk9IjAuOCIvPgo8L3N2Zz4=')] mix-blend-overlay"></div>
-          
-          <h2 className="font-display text-[4rem] md:text-[7rem] lg:text-[10rem] font-bold leading-[0.9] tracking-tighter text-center max-w-[90vw]">
-            <span className="text-zinc-800 transition-colors duration-1000 hover:text-zinc-700">99.8%</span><br/>
-            <span className="text-zinc-800 transition-colors duration-1000 hover:text-zinc-700">OF ALERTS</span><br/>
-            <span className="text-zinc-800 transition-colors duration-1000 hover:text-zinc-700">ARE NOISE.</span>
-          </h2>
+    <section
+      ref={containerRef}
+      className="relative w-full h-[100svh] overflow-hidden z-10"
+      aria-label="Noise versus signal"
+    >
+      {/* LAYER 1 — NOISE (base, void) */}
+      <div
+        ref={noiseRef}
+        className="surface-void absolute inset-0 flex flex-col items-center justify-center"
+      >
+        <div className="bg-grain absolute inset-0 opacity-[0.07] mix-blend-overlay" />
+        <div className="bg-grid-void absolute inset-0 opacity-50" />
+
+        {/* Noise eyebrow */}
+        <div className="absolute top-12 left-0 right-0 flex items-center justify-center gap-4 font-mono text-[10px] tracking-[0.32em] uppercase text-[#F4EFE3]/30">
+          <span className="w-12 h-px bg-[#F4EFE3]/20" />
+          The Problem
+          <span className="w-12 h-px bg-[#F4EFE3]/20" />
         </div>
 
-        {/* Layer 2: SIGNAL (Masked Layer) */}
-        <div 
-          ref={maskRef} 
-          className="absolute inset-0 flex flex-col items-center justify-center bg-white will-change-transform"
-          style={{ clipPath: "circle(0vw at 50% 50%)" }}
+        <h2
+          ref={noiseHeadRef}
+          className="display-tight text-gradient-smolder font-medium text-[clamp(1.6rem,7.4vw,8rem)] leading-[0.95] text-center px-2 select-none whitespace-nowrap"
+          aria-label="99.8% of alerts are noise"
         >
-          {/* Clean minimal background */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#ffffff_0%,#f4f4f5_100%)]"></div>
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:40px_40px] opacity-50"></div>
-          
-          <div ref={textRef} className="z-10 flex flex-col items-center">
-            <h2 className="font-display text-[4rem] md:text-[7rem] lg:text-[10rem] font-bold leading-[0.9] tracking-tighter text-center max-w-[90vw] text-zinc-900 mix-blend-multiply">
-              <span className="text-zinc-900">WE EXTRACT</span><br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-500 to-orange-400">THE SIGNAL.</span>
-            </h2>
-            <p className="mt-8 font-sans text-xl md:text-2xl text-zinc-500 font-medium tracking-wide max-w-2xl text-center">
-              Vyrox cuts through the chaos with absolute precision, delivering only actionable intelligence.
-            </p>
-          </div>
-          
-          {/* Subtle tech UI overlay on the bright background */}
-          <div className="absolute bottom-10 left-10 flex space-x-6 font-mono text-xs md:text-sm text-zinc-400 font-medium">
-            <div className="flex items-center">
-              <div className="w-2 h-2 rounded-full bg-orange-500 mr-2"></div>
-              STATUS: <span className="text-orange-600 ml-1">SIGNAL ACQUIRED</span>
-            </div>
-            <div>|</div>
-            <div>LATENCY: 12ms</div>
-            <div>|</div>
-            <div>FALSE POSITIVES: 0%</div>
+          99.8% of alerts are noise.
+        </h2>
+
+        <div className="absolute bottom-12 left-0 right-0 flex items-center justify-center gap-2 text-[#F4EFE3]/25 font-mono text-[10px] tracking-[0.3em] uppercase">
+          <span>scroll to extract</span>
+          <span className="inline-block w-4 h-px bg-[#F4EFE3]/30 animate-pulse" />
+        </div>
+      </div>
+
+      {/* LAYER 2 — SIGNAL (mask reveals on scroll, bone) */}
+      <div
+        ref={signalRef}
+        className="surface-bone absolute inset-0 flex flex-col items-center justify-center will-change-[clip-path]"
+        style={{ clipPath: "circle(0% at 50% 60%)" }}
+      >
+        <div className="bg-grid-bone absolute inset-0 opacity-50" />
+        <div className="bg-grain absolute inset-0 opacity-[0.08] mix-blend-multiply" />
+
+        {/* Soft warm vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,#FFFCF1_0%,transparent_55%)]" />
+
+        {/* Signal eyebrow */}
+        <div className="absolute top-12 left-0 right-0 flex items-center justify-center gap-4 font-mono text-[10px] tracking-[0.32em] uppercase text-[#0E0A05]/45">
+          <span className="w-12 h-px bg-[#0E0A05]/25" />
+          The Answer
+          <span className="w-12 h-px bg-[#0E0A05]/25" />
+        </div>
+
+        <div className="relative z-10 flex flex-col items-center px-6">
+          <h2
+            ref={signalHeadRef}
+            className="display-tight text-[#0E0A05] font-medium text-[clamp(3.5rem,13vw,12rem)] leading-[0.85] text-center"
+            aria-label="We extract the signal"
+          >
+            We extract
+          </h2>
+          <h2 className="display-tight text-[clamp(3.5rem,13vw,12rem)] leading-[0.85] font-medium text-center -mt-3">
+            <span className="display-wonk italic text-gradient-ember">
+              the signal.
+            </span>
+          </h2>
+
+          <p
+            ref={signalSubRef}
+            className="mt-8 max-w-[640px] text-balance text-center text-[#2A2118]/80 font-body text-[clamp(1rem,1.35vw,1.2rem)] leading-[1.65]"
+          >
+            Vyrox cuts through the chaos with absolute precision, delivering
+            only actionable intelligence.
+          </p>
+
+          <div
+            ref={statsRef}
+            className="mt-12 grid grid-cols-3 gap-6 md:gap-12 w-full max-w-[640px]"
+          >
+            <Stat label="Status" value="Signal Acquired" accent />
+            <Stat label="Latency" value="12 ms" />
+            <Stat label="False Pos." value="0.2%" />
           </div>
         </div>
 
+        {/* Bottom marquee */}
+        <div
+          ref={marqueeRef}
+          className="absolute bottom-0 inset-x-0 overflow-hidden border-t border-[#0E0A05]/15 bg-[#ECE3CC]/60 backdrop-blur-sm"
+          aria-hidden="true"
+        >
+          <div className="marquee-track py-3 font-mono text-[11px] tracking-[0.28em] uppercase text-[#0E0A05]/55">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <span key={i} className="px-8 inline-flex items-center gap-3">
+                Signal acquired
+                <span className="inline-block w-1.5 h-1.5 bg-[#E8462E] rounded-full" />
+                12 ms triage
+                <span className="inline-block w-1.5 h-1.5 bg-[#E8462E] rounded-full" />
+                0.2% false positive
+                <span className="inline-block w-1.5 h-1.5 bg-[#E8462E] rounded-full" />
+                Zero black-box AI
+                <span className="inline-block w-1.5 h-1.5 bg-[#E8462E] rounded-full" />
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  accent = false,
+}: {
+  label: string;
+  value: string;
+  accent?: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-2 border-l border-[#0E0A05]/15 pl-4">
+      <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-[#0E0A05]/45">
+        {label}
+      </span>
+      <span
+        className={`font-display text-[clamp(1.1rem,1.6vw,1.6rem)] tracking-tight leading-none ${
+          accent ? "text-[#E8462E]" : "text-[#0E0A05]"
+        }`}
+      >
+        {value}
+      </span>
+    </div>
   );
 }
