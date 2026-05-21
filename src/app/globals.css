@@ -56,10 +56,13 @@
 
   html {
     -webkit-text-size-adjust: 100%;
-    text-rendering: geometricPrecision;
+    text-rendering: optimizeLegibility;
     font-feature-settings: "ss01", "ss02", "cv11";
     /* fraunces optical sizing — let the variable axis do its job */
     font-optical-sizing: auto;
+    /* Improve scroll perf on iOS — but DO NOT use scroll-behavior:smooth
+       because GSAP ScrollTrigger conflicts with native smooth scroll. */
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
@@ -328,7 +331,11 @@
 
 /* Smoldering ember — bright crown fading into deep rust shadow.
    Used for the "noise" headline: reads as wasted heat / unrefined fire,
-   contrasting with the .text-gradient-ember (full-bright) used on signal. */
+   contrasting with the .text-gradient-ember (full-bright) used on signal.
+
+   NOTE: drop-shadow is intentionally NOT on the text node — those filters
+   force a separate compositing layer per glyph and tank scroll perf when
+   the headline is in view. The wrapper handles the glow instead. */
 .text-gradient-smolder {
   background:
     linear-gradient(180deg,
@@ -340,9 +347,23 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter:
-    drop-shadow(0 0 28px rgba(232, 70, 46, 0.18))
-    drop-shadow(0 0 60px rgba(232, 70, 46, 0.12));
+}
+
+/* Wrapper provides the ember halo behind smolder text — desktop only. */
+.smolder-glow {
+  position: relative;
+  isolation: isolate;
+}
+.smolder-glow::before {
+  content: "";
+  position: absolute;
+  inset: -10% -5%;
+  background: radial-gradient(ellipse at center, rgba(232, 70, 46, 0.16) 0%, transparent 60%);
+  z-index: -1;
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  .smolder-glow::before { display: none; }
 }
 
 .hover-magnetic {
@@ -409,6 +430,62 @@
   pointer-events: none;
   animation: scan 4s linear infinite;
   mix-blend-mode: screen;
+}
+
+/* =============================================================
+   PERFORMANCE — containment + GPU layers
+   ============================================================= */
+
+/* Layout/style isolation — does NOT include `paint`, which would clip
+   absolutely-positioned children that intentionally overflow (e.g. the
+   "-top-3" label pills on each card). */
+.contain-layout {
+  contain: layout style;
+}
+
+/* Force a GPU compositing layer for actively-animated elements only.
+   Don't apply globally — permanent will-change wastes memory. */
+.gpu {
+  transform: translate3d(0, 0, 0);
+}
+
+/* =============================================================
+   MOBILE PERF OVERRIDES — strip the expensive properties
+   ============================================================= */
+
+@media (max-width: 768px) {
+  /* mix-blend-mode forces a stacking context + compositing layer for
+     every painted pixel underneath. Catastrophic on mobile GPUs. */
+  .mb-screen,
+  .mb-overlay,
+  .mb-multiply,
+  [class*="mix-blend"] {
+    mix-blend-mode: normal !important;
+  }
+
+  /* Backdrop-filter (blur) is the #2 mobile killer after SVG blur. */
+  [class*="backdrop-blur"],
+  [style*="backdrop-filter"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Strip the grain texture on mobile — 220x220 SVG tile repainted every
+     scroll frame, no aesthetic value when GPU is choking. */
+  .bg-grain { background-image: none !important; }
+
+  /* SVG Gaussian blur filter on Hero wings. The CSS `filter` property
+     overrides the SVG `filter=` attribute — flip it to none on mobile. */
+  .svg-filter-blur { filter: none !important; }
+
+  /* Drop pin-spacing artifacts when we disable pins via JS matchMedia. */
+  body { overflow-x: hidden; }
+}
+
+/* Pointer-coarse devices (touch) — never run hover-only animations.
+   Catches iPads in landscape that match desktop widths. */
+@media (pointer: coarse) {
+  .hover-magnetic, .hover-lift { will-change: auto; }
 }
 
 /* Reduced motion overrides — flatten everything */

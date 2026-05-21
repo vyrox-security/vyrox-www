@@ -53,7 +53,7 @@ export default function BentoGrid() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Magnetic hover for cards — desktop only
+  // Magnetic hover — only attached on fine-pointer devices (see effect below)
   const onCardMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
     const rect = el.getBoundingClientRect();
@@ -78,6 +78,15 @@ export default function BentoGrid() {
       overwrite: "auto",
     });
   }, []);
+
+  // Touch devices: short-circuit magnetic hover. iOS Safari fires
+  // mousemove on touch and the rotateX/Y tween causes scroll jank.
+  const isTouch =
+    typeof window !== "undefined" &&
+    window.matchMedia?.("(pointer: coarse)").matches;
+  const hoverProps = isTouch
+    ? {}
+    : { onMouseMove: onCardMouseMove, onMouseLeave: onCardMouseLeave };
 
   useGSAP(
     () => {
@@ -198,7 +207,7 @@ export default function BentoGrid() {
     >
       {/* Texture */}
       <div className="bg-grid-bone absolute inset-0 opacity-40 pointer-events-none" />
-      <div className="bg-grain absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none" />
+      <div className="bg-grain mb-multiply absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none" />
 
       {/* Section header — full bleed editorial */}
       <div className="relative z-10 max-w-[1500px] mx-auto px-6 md:px-12 lg:px-20 pt-32 pb-20">
@@ -234,8 +243,9 @@ export default function BentoGrid() {
       </div>
 
       <div className="max-w-[1500px] mx-auto px-6 md:px-12 lg:px-20 flex flex-col md:flex-row gap-12 relative z-10">
-        {/* LEFT — sticky narrative */}
-        <div className="w-full md:w-[40%] relative">
+        {/* LEFT — sticky narrative (desktop only; on mobile each card
+            carries its own label so this would just waste a viewport). */}
+        <div className="hidden md:block md:w-[40%] relative">
           <div className="sticky top-0 h-screen flex flex-col justify-center py-20 pr-6">
             <div className="relative h-[300px]">
               {features.map((feature, i) => {
@@ -285,14 +295,16 @@ export default function BentoGrid() {
           />
         </div>
 
-        {/* RIGHT — scrolling visual stages */}
-        <div className="w-full md:w-[55%] py-[24vh] flex flex-col gap-[60vh]">
+        {/* RIGHT — scrolling visual stages.
+            Mobile: tight stack (no sticky narrative to pair against).
+            Desktop: each card gets its own viewport-height for the sticky
+            narrative on the left to swap content. */}
+        <div className="w-full md:w-[55%] py-12 md:py-[24vh] flex flex-col gap-12 md:gap-[60vh]">
           {/* Card 01 — Ingestion */}
           <div
             ref={setCardRef(0)}
             data-index="0"
-            onMouseMove={onCardMouseMove}
-            onMouseLeave={onCardMouseLeave}
+            {...hoverProps}
             className="term-window-bone w-full aspect-[4/3] p-7 relative will-change-transform"
           >
             <div className="absolute -top-3 left-6 flex items-center gap-2 bg-[#F2EAD8] px-3 font-mono text-[10px] tracking-[0.24em] uppercase text-[#6B5E48]">
@@ -338,8 +350,7 @@ export default function BentoGrid() {
           <div
             ref={setCardRef(1)}
             data-index="1"
-            onMouseMove={onCardMouseMove}
-            onMouseLeave={onCardMouseLeave}
+            {...hoverProps}
             className="term-window-bone w-full aspect-[4/3] p-7 relative will-change-transform"
           >
             <div className="absolute -top-3 left-6 flex items-center gap-2 bg-[#F2EAD8] px-3 font-mono text-[10px] tracking-[0.24em] uppercase text-[#6B5E48]">
@@ -377,8 +388,7 @@ export default function BentoGrid() {
           <div
             ref={setCardRef(2)}
             data-index="2"
-            onMouseMove={onCardMouseMove}
-            onMouseLeave={onCardMouseLeave}
+            {...hoverProps}
             className="term-window-bone w-full aspect-[4/3] p-7 relative will-change-transform"
           >
             <div className="absolute -top-3 left-6 flex items-center gap-2 bg-[#F2EAD8] px-3 font-mono text-[10px] tracking-[0.24em] uppercase text-[#6B5E48]">
@@ -427,8 +437,7 @@ export default function BentoGrid() {
           <div
             ref={setCardRef(3)}
             data-index="3"
-            onMouseMove={onCardMouseMove}
-            onMouseLeave={onCardMouseLeave}
+            {...hoverProps}
             className="term-window-bone w-full aspect-[4/3] p-7 relative will-change-transform"
           >
             <div className="absolute -top-3 left-6 flex items-center gap-2 bg-[#F2EAD8] px-3 font-mono text-[10px] tracking-[0.24em] uppercase text-[#6B5E48]">

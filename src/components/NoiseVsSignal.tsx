@@ -24,114 +24,253 @@ export default function NoiseVsSignal() {
     () => {
       const mm = gsap.matchMedia();
 
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        if (!containerRef.current) return;
+      // DESKTOP (fine pointer, no reduced motion) — full pinned reveal
+      mm.add(
+        "(min-width: 769px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+        () => {
+          if (!containerRef.current) return;
 
-        const noiseSplit = noiseHeadRef.current
-          ? splitText(noiseHeadRef.current, ["chars", "words"])
-          : null;
-        const signalSplit = signalHeadRef.current
-          ? splitText(signalHeadRef.current, ["chars", "words"])
-          : null;
-        const subSplit = signalSubRef.current
-          ? splitText(signalSubRef.current, ["words"])
-          : null;
+          const noiseSplit = noiseHeadRef.current
+            ? splitText(noiseHeadRef.current, ["chars", "words"])
+            : null;
+          const signalSplit = signalHeadRef.current
+            ? splitText(signalHeadRef.current, ["chars", "words"])
+            : null;
+          const subSplit = signalSubRef.current
+            ? splitText(signalSubRef.current, ["words"])
+            : null;
 
-        // Initial: noise visible, signal masked to zero
-        gsap.set(signalRef.current, {
-          clipPath: "circle(0% at 50% 60%)",
-        });
-        if (signalSplit) gsap.set(signalSplit.chars, { yPercent: 110, opacity: 0 });
-        if (subSplit) gsap.set(subSplit.words, { yPercent: 60, opacity: 0 });
-        gsap.set(statsRef.current?.children ?? [], { opacity: 0, y: 16 });
+          gsap.set(signalRef.current, { clipPath: "circle(0% at 50% 60%)" });
+          if (signalSplit) gsap.set(signalSplit.chars, { yPercent: 110, opacity: 0 });
+          if (subSplit) gsap.set(subSplit.words, { yPercent: 60, opacity: 0 });
+          gsap.set(statsRef.current?.children ?? [], { opacity: 0, y: 16 });
 
-        // 1) Noise headline reveals on enter
-        if (noiseSplit) {
+          if (noiseSplit) {
+            gsap.fromTo(
+              noiseSplit.chars,
+              { yPercent: 100, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 1,
+                stagger: 0.012,
+                ease: "expo.out",
+                scrollTrigger: {
+                  trigger: containerRef.current,
+                  start: "top 80%",
+                  toggleActions: "play none none reverse",
+                },
+              }
+            );
+          }
+
+          const reveal = gsap.timeline({
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top top",
+              end: "+=180%",
+              scrub: 1,
+              pin: true,
+              pinSpacing: true,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          reveal
+            .to(
+              signalRef.current,
+              { clipPath: "circle(150% at 50% 50%)", ease: "power2.inOut", duration: 1.2 },
+              0
+            )
+            .to(noiseRef.current, { opacity: 0.18, scale: 0.92, ease: "power2.out", duration: 1.2 }, 0)
+            .to(
+              signalSplit?.chars ?? [],
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.6,
+                ease: "expo.out",
+                stagger: { each: 0.018, from: "start" },
+              },
+              0.55
+            )
+            .to(
+              subSplit?.words ?? [],
+              { yPercent: 0, opacity: 1, duration: 0.5, ease: "power3.out", stagger: 0.02 },
+              0.85
+            )
+            .to(
+              statsRef.current?.children ?? [],
+              { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.05 },
+              0.95
+            );
+
           gsap.fromTo(
-            noiseSplit.chars,
-            { yPercent: 100, opacity: 0 },
+            marqueeRef.current,
+            { opacity: 0 },
             {
-              yPercent: 0,
               opacity: 1,
-              duration: 1,
-              stagger: 0.012,
-              ease: "expo.out",
+              duration: 0.6,
+              ease: "power2.out",
               scrollTrigger: {
                 trigger: containerRef.current,
-                start: "top 80%",
+                start: "top -40%",
+                end: "top -60%",
+                scrub: true,
+              },
+            }
+          );
+
+          return () => {
+            noiseSplit?.revert();
+            signalSplit?.revert();
+            subSplit?.revert();
+          };
+        }
+      );
+
+      // MOBILE / TOUCH — no pin, no scrub. Two-stage toggle keeps the
+      // narrative (noise visible → signal reveals) without holding the
+      // scroll, which is what causes the sluggish feel on iOS Safari.
+      mm.add(
+        "(max-width: 768px), (pointer: coarse)",
+        () => {
+          if (!containerRef.current) return;
+
+          // Make sure signal layer is fully shaped — no clip-path animation.
+          gsap.set(signalRef.current, { clipPath: "circle(0% at 50% 60%)", opacity: 1 });
+
+          const noiseSplit = noiseHeadRef.current
+            ? splitText(noiseHeadRef.current, ["chars", "words"])
+            : null;
+          const signalSplit = signalHeadRef.current
+            ? splitText(signalHeadRef.current, ["chars", "words"])
+            : null;
+          const subSplit = signalSubRef.current
+            ? splitText(signalSubRef.current, ["words"])
+            : null;
+
+          if (noiseSplit) {
+            gsap.fromTo(
+              noiseSplit.chars,
+              { yPercent: 100, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.7,
+                stagger: 0.01,
+                ease: "expo.out",
+                scrollTrigger: {
+                  trigger: containerRef.current,
+                  start: "top 85%",
+                  toggleActions: "play none none reverse",
+                },
+              }
+            );
+          }
+
+          // Single toggle: clip opens once on scroll-into, no scrub.
+          // clip-path animated via short fixed-duration tween, NOT tied to scroll position.
+          gsap.to(signalRef.current, {
+            clipPath: "circle(150% at 50% 50%)",
+            duration: 1.2,
+            ease: "power2.inOut",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top 40%",
+              toggleActions: "play none none reverse",
+            },
+          });
+          gsap.to(noiseRef.current, {
+            opacity: 0.2,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top 40%",
+              toggleActions: "play none none reverse",
+            },
+          });
+
+          if (signalSplit) {
+            gsap.fromTo(
+              signalSplit.chars,
+              { yPercent: 110, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.7,
+                stagger: { each: 0.018, from: "start" },
+                ease: "expo.out",
+                delay: 0.3,
+                scrollTrigger: {
+                  trigger: containerRef.current,
+                  start: "top 40%",
+                  toggleActions: "play none none reverse",
+                },
+              }
+            );
+          }
+          if (subSplit) {
+            gsap.fromTo(
+              subSplit.words,
+              { yPercent: 60, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.6,
+                stagger: 0.02,
+                ease: "power3.out",
+                delay: 0.7,
+                scrollTrigger: {
+                  trigger: containerRef.current,
+                  start: "top 40%",
+                  toggleActions: "play none none reverse",
+                },
+              }
+            );
+          }
+          gsap.fromTo(
+            statsRef.current?.children ?? [],
+            { opacity: 0, y: 16 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.5,
+              stagger: 0.05,
+              ease: "power3.out",
+              delay: 0.85,
+              scrollTrigger: {
+                trigger: containerRef.current,
+                start: "top 40%",
                 toggleActions: "play none none reverse",
               },
             }
           );
-        }
-
-        // 2) Pin + scrub the void → bone reveal
-        const reveal = gsap.timeline({
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: "+=180%",
-            scrub: 1,
-            pin: true,
-            pinSpacing: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        reveal
-          .to(
-            signalRef.current,
-            { clipPath: "circle(150% at 50% 50%)", ease: "power2.inOut", duration: 1.2 },
-            0
-          )
-          .to(noiseRef.current, { opacity: 0.18, scale: 0.92, ease: "power2.out", duration: 1.2 }, 0)
-          // signal headline rises into view after the mask is mostly open
-          .to(
-            signalSplit?.chars ?? [],
+          gsap.fromTo(
+            marqueeRef.current,
+            { opacity: 0 },
             {
-              yPercent: 0,
               opacity: 1,
               duration: 0.6,
-              ease: "expo.out",
-              stagger: { each: 0.018, from: "start" },
-            },
-            0.55
-          )
-          .to(
-            subSplit?.words ?? [],
-            { yPercent: 0, opacity: 1, duration: 0.5, ease: "power3.out", stagger: 0.02 },
-            0.85
-          )
-          .to(
-            statsRef.current?.children ?? [],
-            { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.05 },
-            0.95
+              ease: "power2.out",
+              delay: 1.0,
+              scrollTrigger: {
+                trigger: containerRef.current,
+                start: "top 40%",
+                toggleActions: "play none none reverse",
+              },
+            }
           );
 
-        // 3) Marquee fades in once signal is dominant
-        gsap.fromTo(
-          marqueeRef.current,
-          { opacity: 0 },
-          {
-            opacity: 1,
-            duration: 0.6,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: "top -40%",
-              end: "top -60%",
-              scrub: true,
-            },
-          }
-        );
-
-        return () => {
-          noiseSplit?.revert();
-          signalSplit?.revert();
-          subSplit?.revert();
-        };
-      });
+          return () => {
+            noiseSplit?.revert();
+            signalSplit?.revert();
+            subSplit?.revert();
+          };
+        }
+      );
 
       // Reduced motion — show signal layer fully
       mm.add("(prefers-reduced-motion: reduce)", () => {
@@ -155,7 +294,7 @@ export default function NoiseVsSignal() {
         ref={noiseRef}
         className="surface-void absolute inset-0 flex flex-col items-center justify-center"
       >
-        <div className="bg-grain absolute inset-0 opacity-[0.07] mix-blend-overlay" />
+        <div className="bg-grain mb-overlay absolute inset-0 opacity-[0.07] mix-blend-overlay" />
         <div className="bg-grid-void absolute inset-0 opacity-50" />
 
         {/* Noise eyebrow */}
@@ -165,13 +304,15 @@ export default function NoiseVsSignal() {
           <span className="w-12 h-px bg-[#F4EFE3]/20" />
         </div>
 
-        <h2
-          ref={noiseHeadRef}
-          className="display-tight text-gradient-smolder font-medium text-[clamp(1.6rem,7.4vw,8rem)] leading-[0.95] text-center px-2 select-none whitespace-nowrap"
-          aria-label="99.8% of alerts are noise"
-        >
-          99.8% of alerts are noise.
-        </h2>
+        <div className="smolder-glow">
+          <h2
+            ref={noiseHeadRef}
+            className="display-tight text-gradient-smolder font-medium text-[clamp(1.6rem,7.4vw,8rem)] leading-[0.95] text-center px-2 select-none whitespace-nowrap"
+            aria-label="99.8% of alerts are noise"
+          >
+            99.8% of alerts are noise.
+          </h2>
+        </div>
 
         <div className="absolute bottom-12 left-0 right-0 flex items-center justify-center gap-2 text-[#F4EFE3]/25 font-mono text-[10px] tracking-[0.3em] uppercase">
           <span>scroll to extract</span>
@@ -186,7 +327,7 @@ export default function NoiseVsSignal() {
         style={{ clipPath: "circle(0% at 50% 60%)" }}
       >
         <div className="bg-grid-bone absolute inset-0 opacity-50" />
-        <div className="bg-grain absolute inset-0 opacity-[0.08] mix-blend-multiply" />
+        <div className="bg-grain mb-multiply absolute inset-0 opacity-[0.08] mix-blend-multiply" />
 
         {/* Soft warm vignette */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,#FFFCF1_0%,transparent_55%)]" />
@@ -233,7 +374,7 @@ export default function NoiseVsSignal() {
         {/* Bottom marquee */}
         <div
           ref={marqueeRef}
-          className="absolute bottom-0 inset-x-0 overflow-hidden border-t border-[#0E0A05]/15 bg-[#ECE3CC]/60 backdrop-blur-sm"
+          className="absolute bottom-0 inset-x-0 overflow-hidden border-t border-[#0E0A05]/15 bg-[#ECE3CC]/85"
           aria-hidden="true"
         >
           <div className="marquee-track py-3 font-mono text-[11px] tracking-[0.28em] uppercase text-[#0E0A05]/55">

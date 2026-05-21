@@ -173,32 +173,38 @@ export default function Hero() {
               "-=0.5"
             );
 
-          // Continuous cinematic breathing — wings drift
-          gsap.to(leftWing.current, {
-            rotation: -2.5,
-            scaleY: 1.04,
-            yoyo: true,
-            repeat: -1,
-            duration: 5.5,
-            ease: "sine.inOut",
-            transformOrigin: "100% 100%",
-          });
-          gsap.to(rightWing.current, {
-            rotation: 2.5,
-            scaleY: 1.04,
-            yoyo: true,
-            repeat: -1,
-            duration: 5.5,
-            ease: "sine.inOut",
-            transformOrigin: "0% 100%",
-          });
-          gsap.to(coreOrbRef.current, {
-            scale: 1.08,
-            yoyo: true,
-            repeat: -1,
-            duration: 2.4,
-            ease: "sine.inOut",
-          });
+          // Continuous cinematic breathing — DESKTOP ONLY.
+          // On mobile, every repaint of the wings re-runs the SVG blur
+          // filter (or its CSS-disabled fallback) which still costs a
+          // composite. Static wings are faster and visually fine on small
+          // viewports where the wings are cropped anyway.
+          if (cond.isDesktop) {
+            gsap.to(leftWing.current, {
+              rotation: -2.5,
+              scaleY: 1.04,
+              yoyo: true,
+              repeat: -1,
+              duration: 5.5,
+              ease: "sine.inOut",
+              transformOrigin: "100% 100%",
+            });
+            gsap.to(rightWing.current, {
+              rotation: 2.5,
+              scaleY: 1.04,
+              yoyo: true,
+              repeat: -1,
+              duration: 5.5,
+              ease: "sine.inOut",
+              transformOrigin: "0% 100%",
+            });
+            gsap.to(coreOrbRef.current, {
+              scale: 1.08,
+              yoyo: true,
+              repeat: -1,
+              duration: 2.4,
+              ease: "sine.inOut",
+            });
+          }
 
           // Subtle parallax on mouse — desktop only
           if (cond.isDesktop && wingsRef.current) {
@@ -251,8 +257,9 @@ export default function Hero() {
       ref={containerRef}
       className="surface-void relative w-full min-h-[100svh] flex flex-col items-center justify-center overflow-hidden isolate"
     >
-      {/* Grain & grid texture */}
-      <div className="bg-grain pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-overlay z-0" />
+      {/* Grain & grid texture — mix-blend-overlay tanks mobile GPU,
+          the .mb-overlay class is stripped by the mobile media query. */}
+      <div className="bg-grain mb-overlay pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-overlay z-0" />
       <div className="bg-grid-void pointer-events-none absolute inset-0 opacity-60 z-0" />
 
       {/* Cinematic top + bottom vignettes */}
@@ -287,7 +294,7 @@ export default function Hero() {
         <svg
           ref={wingsRef}
           viewBox="0 0 1200 800"
-          className="w-full min-w-[1100px] max-w-[1700px] h-auto opacity-[0.95] mix-blend-screen"
+          className="mb-screen w-full min-w-[1100px] max-w-[1700px] h-auto opacity-[0.95] mix-blend-screen"
           aria-hidden="true"
         >
           <defs>
@@ -310,12 +317,15 @@ export default function Hero() {
               <stop offset="40%" stopColor="#E8462E" stopOpacity="0.6" />
               <stop offset="100%" stopColor="#3A0A03" stopOpacity="0" />
             </radialGradient>
-            <filter id="wingBlur" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="14" result="blurM" />
-              <feGaussianBlur stdDeviation="4" result="blurS" />
+            {/* Single blur pass + SourceGraphic overlay. The original used
+                14 + 4 stdDeviation in a feMerge with SourceGraphic — about
+                3× the paint cost. This version keeps the sharp wing on top
+                of one halo pass, which reads identically on desktop and
+                lets the CSS .svg-filter-blur class disable it on mobile. */}
+            <filter id="wingBlur" x="-25%" y="-25%" width="150%" height="150%">
+              <feGaussianBlur stdDeviation="12" result="halo" />
               <feMerge>
-                <feMergeNode in="blurM" />
-                <feMergeNode in="blurS" />
+                <feMergeNode in="halo" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
@@ -331,8 +341,8 @@ export default function Hero() {
             opacity="0.7"
           />
 
-          {/* LEFT WING */}
-          <g ref={leftWing} filter="url(#wingBlur)">
+          {/* LEFT WING — svg-filter-blur class lets CSS strip the blur on mobile */}
+          <g ref={leftWing} filter="url(#wingBlur)" className="svg-filter-blur">
             <path d="M600,500 Q400,450 150,150 Q300,300 450,450 Z" fill="url(#fireGradLeft)" />
             <path d="M580,480 Q350,380 180,50 Q350,200 480,420 Z" fill="url(#fireGradLeft)" opacity="0.7" />
             <path d="M600,550 Q400,550 50,350 Q250,450 500,520 Z" fill="url(#fireGradLeft)" opacity="0.5" />
@@ -340,7 +350,7 @@ export default function Hero() {
           </g>
 
           {/* RIGHT WING */}
-          <g ref={rightWing} filter="url(#wingBlur)">
+          <g ref={rightWing} filter="url(#wingBlur)" className="svg-filter-blur">
             <path d="M600,500 Q800,450 1050,150 Q900,300 750,450 Z" fill="url(#fireGradRight)" />
             <path d="M620,480 Q850,380 1020,50 Q850,200 720,420 Z" fill="url(#fireGradRight)" opacity="0.7" />
             <path d="M600,550 Q800,550 1150,350 Q950,450 700,520 Z" fill="url(#fireGradRight)" opacity="0.5" />
