@@ -106,7 +106,7 @@ export default function Footer() {
       className="surface-bone relative w-full flex flex-col justify-between overflow-hidden text-[#0E0A05]"
     >
       <div className="bg-grid-bone absolute inset-0 opacity-30 pointer-events-none" />
-      <div className="bg-grain absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none" />
+      <div className="bg-grain mb-multiply absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none" />
 
       {/* Scanner line — top edge */}
       <div className="absolute top-0 inset-x-0 h-px bg-[#0E0A05]/12">

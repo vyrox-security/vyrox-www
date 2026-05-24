@@ -29,9 +29,8 @@ export default function TrustModel() {
     () => {
       const mm = gsap.matchMedia();
 
+      // Common — headline reveal + counters (cheap, runs on all viewports)
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        if (!sectionRef.current) return;
-
         const headSplit = headlineRef.current
           ? splitText(headlineRef.current, ["chars", "words"])
           : null;
@@ -54,7 +53,6 @@ export default function TrustModel() {
           );
         }
 
-        // Number counters
         const counters =
           numbersRef.current?.querySelectorAll<HTMLSpanElement>("[data-counter]");
         counters?.forEach((el) => {
@@ -76,35 +74,74 @@ export default function TrustModel() {
           });
         });
 
-        // Stacked card pop — pinned scrub
-        gsap.set([card1Ref.current, card2Ref.current, card3Ref.current], {
-          transformPerspective: 1400,
-          transformOrigin: "center center",
-        });
-        gsap.set(card3Ref.current, { rotation: 0, x: 0, y: 0, scale: 0.95, opacity: 0.85 });
-        gsap.set(card2Ref.current, { rotation: 0, x: 0, y: 0, scale: 0.97, opacity: 0.95 });
-        gsap.set(card1Ref.current, { rotation: 0, x: 0, y: 0, scale: 1, opacity: 1 });
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top top",
-            end: "+=160%",
-            scrub: 1.2,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-
-        tl.to(card3Ref.current, { y: 200, x: 90, rotation: 9, scale: 0.92, opacity: 1 }, 0)
-          .to(card2Ref.current, { y: 30, x: 40, rotation: 4, scale: 0.97 }, 0)
-          .to(card1Ref.current, { y: -180, x: -40, rotation: -3, scale: 1.04 }, 0);
-
         return () => {
           headSplit?.revert();
         };
       });
+
+      // DESKTOP — pinned stacked-card fan
+      mm.add(
+        "(min-width: 769px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
+        () => {
+          if (!sectionRef.current) return;
+
+          gsap.set([card1Ref.current, card2Ref.current, card3Ref.current], {
+            transformPerspective: 1400,
+            transformOrigin: "center center",
+          });
+          gsap.set(card3Ref.current, { rotation: 0, x: 0, y: 0, scale: 0.95, opacity: 0.85 });
+          gsap.set(card2Ref.current, { rotation: 0, x: 0, y: 0, scale: 0.97, opacity: 0.95 });
+          gsap.set(card1Ref.current, { rotation: 0, x: 0, y: 0, scale: 1, opacity: 1 });
+
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top top",
+              end: "+=160%",
+              scrub: 1.2,
+              pin: true,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          tl.to(card3Ref.current, { y: 200, x: 90, rotation: 9, scale: 0.92, opacity: 1 }, 0)
+            .to(card2Ref.current, { y: 30, x: 40, rotation: 4, scale: 0.97 }, 0)
+            .to(card1Ref.current, { y: -180, x: -40, rotation: -3, scale: 1.04 }, 0);
+        }
+      );
+
+      // MOBILE / TOUCH — no pin, no scrub. Cards stack vertically per
+      // CSS layout (lg:absolute drops to relative below lg). JS only
+      // handles the fade-in; never touches `position` so a touchscreen
+      // laptop that briefly matches this query can't strand desktop
+      // styles when conditions change.
+      mm.add(
+        "(max-width: 768px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          if (!sectionRef.current) return;
+          const cards = [card1Ref.current, card2Ref.current, card3Ref.current];
+          cards.forEach((c, i) => {
+            if (!c) return;
+            gsap.fromTo(
+              c,
+              { opacity: 0, y: 40 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: 0.7,
+                ease: "expo.out",
+                delay: i * 0.08,
+                scrollTrigger: {
+                  trigger: c,
+                  start: "top 85%",
+                  toggleActions: "play none none reverse",
+                },
+              }
+            );
+          });
+        }
+      );
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set([card1Ref.current, card2Ref.current, card3Ref.current], {
@@ -125,12 +162,12 @@ export default function TrustModel() {
     <section
       ref={sectionRef}
       id="trust"
-      className="surface-bone relative w-full h-[100svh] overflow-hidden flex items-center"
+      className="surface-bone relative w-full lg:h-[100svh] overflow-hidden flex items-center py-20 lg:py-0"
     >
       <div className="bg-grid-bone absolute inset-0 opacity-40 pointer-events-none" />
-      <div className="bg-grain absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none" />
+      <div className="bg-grain mb-multiply absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none" />
 
-      <div className="max-w-[1500px] w-full mx-auto px-6 md:px-12 lg:px-20 flex flex-col lg:flex-row items-stretch justify-between h-full relative z-10">
+      <div className="max-w-[1500px] w-full mx-auto px-6 md:px-12 lg:px-20 flex flex-col lg:flex-row items-center justify-between h-full relative z-10">
         {/* LEFT — copy */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center pt-24 lg:pt-0 pr-0 lg:pr-8">
           <div className="flex items-center gap-3 mb-10">
@@ -181,12 +218,12 @@ export default function TrustModel() {
           </div>
         </div>
 
-        {/* RIGHT — fanned card stack */}
-        <div className="w-full lg:w-1/2 h-[600px] lg:h-auto relative flex items-center justify-center mt-12 lg:mt-0">
-          {/* Card 3 — audit_log.json (bottom) */}
+        {/* RIGHT — fanned card stack (desktop) / vertical stack (mobile) */}
+        <div className="w-full lg:w-1/2 lg:h-auto relative flex flex-col lg:block items-stretch lg:items-center justify-start lg:justify-center gap-6 lg:gap-0 mt-12 lg:mt-0">
+          {/* Card 3 — audit_log.json (bottom on desktop) */}
           <div
             ref={card3Ref}
-            className="absolute w-[min(92vw,460px)] term-window-bone p-6 z-10"
+            className="lg:absolute w-full lg:w-[min(92vw,460px)] term-window-bone p-6 z-10"
           >
             <div className="flex justify-between items-center border-b border-[#0E0A05]/10 pb-3 mb-4">
               <div className="flex items-center text-[#6B5E48] font-mono text-[10px] tracking-[0.24em] uppercase">
@@ -221,10 +258,10 @@ export default function TrustModel() {
             </div>
           </div>
 
-          {/* Card 2 — heuristics.yaml (middle) */}
+          {/* Card 2 — heuristics.yaml (middle on desktop) */}
           <div
             ref={card2Ref}
-            className="absolute w-[min(92vw,460px)] term-window-bone p-6 z-20"
+            className="lg:absolute w-full lg:w-[min(92vw,460px)] term-window-bone p-6 z-20"
           >
             <div className="flex justify-between items-center border-b border-[#0E0A05]/10 pb-3 mb-4">
               <div className="flex items-center text-[#6B5E48] font-mono text-[10px] tracking-[0.24em] uppercase">
@@ -271,10 +308,10 @@ export default function TrustModel() {
             </div>
           </div>
 
-          {/* Card 1 — triage_engine.rs (top) */}
+          {/* Card 1 — triage_engine.rs (top on desktop) */}
           <div
             ref={card1Ref}
-            className="absolute w-[min(92vw,460px)] term-window-bone p-6 z-30"
+            className="lg:absolute w-full lg:w-[min(92vw,460px)] term-window-bone p-6 z-30"
           >
             <div className="flex justify-between items-center border-b border-[#0E0A05]/10 pb-3 mb-4">
               <div className="flex items-center text-[#2A2118] font-mono text-[10px] tracking-[0.24em] uppercase">
