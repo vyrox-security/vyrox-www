@@ -51,6 +51,6 @@ No bounty program is active during alpha.
 ## Known Limitations
 
 - Marketing pages may temporarily lead implementation details during active iteration.
-- Free-tier hosting constraints can affect preview environment reliability.
+- Infrastructure capacity constraints can affect preview environment reliability.
 
 These are operational constraints, not vulnerabilities.
