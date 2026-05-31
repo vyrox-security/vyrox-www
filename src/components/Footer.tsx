@@ -227,7 +227,7 @@ export default function Footer() {
           </div>
 
           <div className="flex-[2] flex flex-col md:flex-row">
-            <FooterCell label="Compliance" value="SOC2 Type II · in progress" />
+            <FooterCell label="Compliance" value="SOC2 Type I · in progress" />
             <FooterCell label="Infrastructure" value="On-premise · air-gapped" />
             <FooterCell label="Disclosure" value="vyrox.dev/.well-known/security.txt" />
           </div>
