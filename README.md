@@ -18,7 +18,7 @@ Vyrox is an **AI-native Managed Detection and Response (MDR) service** that deli
 | Traditional MSSP | Vyrox |
 |-----------------|-------|
 | $15-25/endpoint/month | $6-8/endpoint/month |
-| Billable hours padding | No padding — AI doesn't invoice |
+| Billable hours padding | No padding, AI doesn't invoice |
 | 24-48hr response | 15-minute SLA on CRITICAL |
 | Account managers, overhead | API-first, no bloat |
 
