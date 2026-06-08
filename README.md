@@ -7,20 +7,15 @@
 
 ## What is Vyrox?
 
-Vyrox is an **AI-native Managed Detection and Response (MDR) service** that delivers enterprise-grade security at a fraction of traditional MSSP costs.
+Vyrox is the **autonomous, auditable action layer for security operations**. We act on EDR alerts and prove every action with an owned, tamper-evident audit trail.
 
-**The Problem**: Mid-market companies (200-2,500 employees) have CrowdStrike or SentinelOne but no SOC team to monitor it 24/7. Traditional MSSPs charge $15-25/endpoint/month and pad billable hours.
+**The Problem**: detection is solved, response is not. An alert fires, it sits in a queue, and at 2am nobody is home. Even when someone acts, no one can reconstruct what was done afterward. Companies bought detection and were left alone with the hard part.
 
-**The Solution**: AI-powered triage that handles 80%+ of alerts automatically, with human analysts for critical decisions. Same SLA as a 50-person MSSP, at 1/3 the price.
+**The Solution**: deterministic heuristics drop most of the noise, an LLM handles the ambiguous rest, and we act on what is real (human approval by default, autonomous where the customer turns it on and the action is reversible). Every action is written to a SHA-256 hash-chained audit log the customer owns.
 
-### Why Vyrox?
+### Who it is for
 
-| Traditional MSSP | Vyrox |
-|-----------------|-------|
-| $15-25/endpoint/month | $6-8/endpoint/month |
-| Billable hours padding | No padding, AI doesn't invoice |
-| 24-48hr response | 15-minute SLA on CRITICAL |
-| Account managers, overhead | API-first, no bloat |
+Sold MSSP-first: one analyst covers many client tenants and can prove every action to each client's auditor. Lean in-house teams come in through the inbound door.
 
 Website: [vyrox.dev](https://vyrox.dev) (launching 2026)
 
@@ -94,7 +89,7 @@ Do not merge copy that overstates capabilities, implies unsupported integrations
 
 See CONTRIBUTING.md for contribution process and review expectations. External contributions may be accepted, but claims must remain technically defensible.
 
-Security contact: sec.vyrox@proton.me
+Security contact: security@vyrox.dev
 
 ## Licence
 
