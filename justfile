@@ -1,4 +1,4 @@
-# Vyrox Landing Page Justfile
+# Vyrox WWW Justfile
 # =====================================================================
 # Production-grade task runner for the marketing site.
 # Public landing page at vyrox.dev

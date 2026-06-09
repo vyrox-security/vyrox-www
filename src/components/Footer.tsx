@@ -204,10 +204,10 @@ export default function Footer() {
                 CLI Documentation
               </a>
               <a
-                href="mailto:sec.vyrox@proton.me"
+                href="mailto:security@vyrox.dev"
                 className="font-mono text-[10px] text-[#6B5E48] hover:text-[#E8462E] transition-colors tracking-[0.24em] uppercase"
               >
-                sec.vyrox@proton.me
+                security@vyrox.dev
               </a>
             </div>
           </div>

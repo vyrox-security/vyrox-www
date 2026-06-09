@@ -1,4 +1,4 @@
-# Contributing to Vyrox Landing
+# Contributing to Vyrox WWW
 
 ## Before You Open a PR
 
