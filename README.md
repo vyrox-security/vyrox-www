@@ -3,7 +3,6 @@
 ![Build](https://img.shields.io/badge/build-alpha-6a737d?style=flat-square)
 ![Version](https://img.shields.io/badge/version-v0.1.0--alpha-005cc5?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-node-339933?style=flat-square)
-![Funny](https://img.shields.io/badge/hero%20copy-reviewed%20by%20skeptics-6a737d?style=flat-square)
 
 ## What is Vyrox?
 
@@ -21,7 +20,7 @@ Website: [vyrox.dev](https://vyrox.dev) (launching 2026)
 
 ---
 
-Vyrox Landing is the public product site for explaining what Vyrox does, how the trust model works, and why the execution boundary is open-core and auditable. It exists separately from the runtime code so go-to-market iteration does not risk operational systems, while still giving security buyers enough implementation detail to pass an initial zero-trust sniff test.
+Vyrox WWW is the public product site for explaining what Vyrox does, how the trust model works, and why the execution boundary is open-core and auditable. It exists separately from the runtime code so go-to-market iteration does not risk operational systems, while still giving security buyers enough implementation detail to pass an initial zero-trust sniff test.
 
 ## Why This Exists
 

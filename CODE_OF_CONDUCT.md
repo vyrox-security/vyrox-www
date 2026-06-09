@@ -21,4 +21,4 @@ This project is public-facing security product material. Keep discussion technic
 
 Maintainers may edit, lock, remove, or restrict participation that harms project quality or safety.
 
-Security concerns: security@vyrox.security
+Security concerns: security@vyrox.dev
