@@ -2,24 +2,24 @@
 
 /* =============================================================
    VYROX DESIGN SYSTEM
-   "We extract the signal" — editorial brutalism, noir tactical
+   "We extract the signal" - editorial brutalism, noir tactical
    ============================================================= */
 
 @theme {
-  /* Surfaces — void (pre-signal) and bone (post-signal) */
+  /* Surfaces - void (pre-signal) and bone (post-signal) */
   --color-void:   #050505;
   --color-pitch:  #0A0A0B;
   --color-graphite: #14141A;
   --color-ash:    #1F1F26;
 
-  --color-bone:   #F2EAD8;       /* warm paper — the "signal" surface */
+  --color-bone:   #F2EAD8;       /* warm paper - the "signal" surface */
   --color-paper:  #F6F0E1;
   --color-linen:  #ECE3CC;
   --color-ink:    #0E0A05;
   --color-graphite-dark: #2A2118;
   --color-clay:   #6B5E48;
 
-  /* Signal accents — refined ember palette */
+  /* Signal accents - refined ember palette */
   --color-ember:    #E8462E;     /* primary signal */
   --color-ember-2:  #FF6A3D;
   --color-ember-3:  #FF9156;
@@ -42,7 +42,7 @@
     /* Editorial spacing rhythm */
     --rhythm: 8px;
 
-    /* Motion easings — for CSS-only motion */
+    /* Motion easings - for CSS-only motion */
     --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
     --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
     --ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
@@ -58,9 +58,9 @@
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
     font-feature-settings: "ss01", "ss02", "cv11";
-    /* fraunces optical sizing — let the variable axis do its job */
+    /* fraunces optical sizing - let the variable axis do its job */
     font-optical-sizing: auto;
-    /* Improve scroll perf on iOS — but DO NOT use scroll-behavior:smooth
+    /* Improve scroll perf on iOS - but DO NOT use scroll-behavior:smooth
        because GSAP ScrollTrigger conflicts with native smooth scroll. */
     -webkit-tap-highlight-color: transparent;
   }
@@ -97,7 +97,7 @@
 }
 
 /* =============================================================
-   TYPOGRAPHY — editorial display + technical body
+   TYPOGRAPHY - editorial display + technical body
    ============================================================= */
 
 .font-display { font-family: var(--font-display); font-optical-sizing: auto; }
@@ -129,7 +129,7 @@
 }
 
 /* =============================================================
-   TEXTURES — atmospheric depth
+   TEXTURES - atmospheric depth
    ============================================================= */
 
 .bg-grain {
@@ -151,7 +151,7 @@
   background-size: 56px 56px;
 }
 
-/* Etched bone surface — letterpress texture */
+/* Etched bone surface - letterpress texture */
 .surface-bone {
   background:
     radial-gradient(ellipse at 50% 0%, #FAF2DD 0%, transparent 60%),
@@ -167,7 +167,7 @@
     var(--color-void);
 }
 
-/* Diagonal cinema bars — editorial rule */
+/* Diagonal cinema bars - editorial rule */
 .rule-diagonal {
   background-image: repeating-linear-gradient(
     -45deg,
@@ -179,7 +179,7 @@
 }
 
 /* =============================================================
-   COMPONENTS — buttons, chips, terminal frames
+   COMPONENTS - buttons, chips, terminal frames
    ============================================================= */
 
 .btn-ember {
@@ -305,7 +305,7 @@
 }
 
 /* =============================================================
-   UTILITIES — text gradients, hover lifts
+   UTILITIES - text gradients, hover lifts
    ============================================================= */
 
 .text-gradient-ember {
@@ -329,11 +329,11 @@
   background-clip: text;
 }
 
-/* Smoldering ember — bright crown fading into deep rust shadow.
+/* Smoldering ember - bright crown fading into deep rust shadow.
    Used for the "noise" headline: reads as wasted heat / unrefined fire,
    contrasting with the .text-gradient-ember (full-bright) used on signal.
 
-   NOTE: drop-shadow is intentionally NOT on the text node — those filters
+   NOTE: drop-shadow is intentionally NOT on the text node - those filters
    force a separate compositing layer per glyph and tank scroll perf when
    the headline is in view. The wrapper handles the glow instead. */
 .text-gradient-smolder {
@@ -349,7 +349,7 @@
   background-clip: text;
 }
 
-/* Wrapper provides the ember halo behind smolder text — desktop only. */
+/* Wrapper provides the ember halo behind smolder text - desktop only. */
 .smolder-glow {
   position: relative;
   isolation: isolate;
@@ -379,7 +379,7 @@
 }
 
 /* =============================================================
-   GSAP REVEAL SCAFFOLDING — initial state hidden, JS reveals
+   GSAP REVEAL SCAFFOLDING - initial state hidden, JS reveals
    ============================================================= */
 
 .reveal-char,
@@ -417,7 +417,7 @@
   animation: marquee 28s linear infinite;
 }
 
-/* Scanline shimmer — used as accent */
+/* Scanline shimmer - used as accent */
 @keyframes scan {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(2000%); }
@@ -433,10 +433,10 @@
 }
 
 /* =============================================================
-   PERFORMANCE — containment + GPU layers
+   PERFORMANCE - containment + GPU layers
    ============================================================= */
 
-/* Layout/style isolation — does NOT include `paint`, which would clip
+/* Layout/style isolation - does NOT include `paint`, which would clip
    absolutely-positioned children that intentionally overflow (e.g. the
    "-top-3" label pills on each card). */
 .contain-layout {
@@ -444,13 +444,13 @@
 }
 
 /* Force a GPU compositing layer for actively-animated elements only.
-   Don't apply globally — permanent will-change wastes memory. */
+   Don't apply globally - permanent will-change wastes memory. */
 .gpu {
   transform: translate3d(0, 0, 0);
 }
 
 /* =============================================================
-   MOBILE PERF OVERRIDES — strip the expensive properties
+   MOBILE PERF OVERRIDES - strip the expensive properties
    ============================================================= */
 
 @media (max-width: 768px) {
@@ -470,25 +470,25 @@
     -webkit-backdrop-filter: none !important;
   }
 
-  /* Strip the grain texture on mobile — 220x220 SVG tile repainted every
+  /* Strip the grain texture on mobile - 220x220 SVG tile repainted every
      scroll frame, no aesthetic value when GPU is choking. */
   .bg-grain { background-image: none !important; }
 
   /* SVG Gaussian blur filter on Hero wings. The CSS `filter` property
-     overrides the SVG `filter=` attribute — flip it to none on mobile. */
+     overrides the SVG `filter=` attribute - flip it to none on mobile. */
   .svg-filter-blur { filter: none !important; }
 
   /* Drop pin-spacing artifacts when we disable pins via JS matchMedia. */
   body { overflow-x: hidden; }
 }
 
-/* Pointer-coarse devices (touch) — never run hover-only animations.
+/* Pointer-coarse devices (touch) - never run hover-only animations.
    Catches iPads in landscape that match desktop widths. */
 @media (pointer: coarse) {
   .hover-magnetic, .hover-lift { will-change: auto; }
 }
 
-/* Reduced motion overrides — flatten everything */
+/* Reduced motion overrides - flatten everything */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

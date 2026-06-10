@@ -6,11 +6,11 @@ import Footer from "@/components/Footer";
 
 /**
  * Narrative flow:
- *  1. Hero (void)                 — Vyrox awakens
- *  2. NoiseVsSignal (handoff)     — void → bone, the conceptual pivot
- *  3. BentoGrid (bone)            — the engine, shown on paper
- *  4. TrustModel (bone)           — open-core credibility
- *  5. Footer (bone)               — final CTA
+ *  1. Hero (void)                 - Vyrox awakens
+ *  2. NoiseVsSignal (handoff)     - void → bone, the conceptual pivot
+ *  3. BentoGrid (bone)            - the engine, shown on paper
+ *  4. TrustModel (bone)           - open-core credibility
+ *  5. Footer (bone)               - final CTA
  */
 export default function Home() {
   return (

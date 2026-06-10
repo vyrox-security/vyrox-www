@@ -24,7 +24,7 @@ export default function NoiseVsSignal() {
     () => {
       const mm = gsap.matchMedia();
 
-      // DESKTOP (fine pointer, no reduced motion) — full pinned reveal
+      // DESKTOP (fine pointer, no reduced motion) - full pinned reveal
       mm.add(
         "(min-width: 769px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
         () => {
@@ -130,7 +130,7 @@ export default function NoiseVsSignal() {
         }
       );
 
-      // MOBILE / TOUCH — no pin, no scrub. Two-stage toggle keeps the
+      // MOBILE / TOUCH - no pin, no scrub. Two-stage toggle keeps the
       // narrative (noise visible → signal reveals) without holding the
       // scroll, which is what causes the sluggish feel on iOS Safari.
       mm.add(
@@ -138,7 +138,7 @@ export default function NoiseVsSignal() {
         () => {
           if (!containerRef.current) return;
 
-          // Make sure signal layer is fully shaped — no clip-path animation.
+          // Make sure signal layer is fully shaped - no clip-path animation.
           gsap.set(signalRef.current, { clipPath: "circle(0% at 50% 60%)", opacity: 1 });
 
           const noiseSplit = noiseHeadRef.current
@@ -272,7 +272,7 @@ export default function NoiseVsSignal() {
         }
       );
 
-      // Reduced motion — show signal layer fully
+      // Reduced motion - show signal layer fully
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set(signalRef.current, { clipPath: "none" });
         gsap.set(noiseRef.current, { opacity: 0.2 });
@@ -289,7 +289,7 @@ export default function NoiseVsSignal() {
       className="relative w-full h-[100svh] overflow-hidden z-10"
       aria-label="Noise versus signal"
     >
-      {/* LAYER 1 — NOISE (base, void) */}
+      {/* LAYER 1 - NOISE (base, void) */}
       <div
         ref={noiseRef}
         className="surface-void absolute inset-0 flex flex-col items-center justify-center"
@@ -320,7 +320,7 @@ export default function NoiseVsSignal() {
         </div>
       </div>
 
-      {/* LAYER 2 — SIGNAL (mask reveals on scroll, bone) */}
+      {/* LAYER 2 - SIGNAL (mask reveals on scroll, bone) */}
       <div
         ref={signalRef}
         className="surface-bone absolute inset-0 flex flex-col items-center justify-center will-change-[clip-path]"

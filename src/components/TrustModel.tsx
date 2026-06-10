@@ -29,7 +29,7 @@ export default function TrustModel() {
     () => {
       const mm = gsap.matchMedia();
 
-      // Common — headline reveal + counters (cheap, runs on all viewports)
+      // Common - headline reveal + counters (cheap, runs on all viewports)
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         const headSplit = headlineRef.current
           ? splitText(headlineRef.current, ["chars", "words"])
@@ -79,7 +79,7 @@ export default function TrustModel() {
         };
       });
 
-      // DESKTOP — pinned stacked-card fan
+      // DESKTOP - pinned stacked-card fan
       mm.add(
         "(min-width: 769px) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
         () => {
@@ -111,7 +111,7 @@ export default function TrustModel() {
         }
       );
 
-      // MOBILE / TOUCH — no pin, no scrub. Cards stack vertically per
+      // MOBILE / TOUCH - no pin, no scrub. Cards stack vertically per
       // CSS layout (lg:absolute drops to relative below lg). JS only
       // handles the fade-in; never touches `position` so a touchscreen
       // laptop that briefly matches this query can't strand desktop
@@ -168,7 +168,7 @@ export default function TrustModel() {
       <div className="bg-grain mb-multiply absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none" />
 
       <div className="max-w-[1500px] w-full mx-auto px-6 md:px-12 lg:px-20 flex flex-col lg:flex-row items-center justify-between h-full relative z-10">
-        {/* LEFT — copy */}
+        {/* LEFT - copy */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center pt-24 lg:pt-0 pr-0 lg:pr-8">
           <div className="flex items-center gap-3 mb-10">
             <ShieldCheck className="w-3.5 h-3.5 text-[#E8462E]" />
@@ -189,7 +189,7 @@ export default function TrustModel() {
 
           <p className="text-[#2A2118]/80 leading-[1.75] max-w-[440px] text-[clamp(0.95rem,1.05vw,1.1rem)]">
             Black-box AI is a liability in the SOC. Vyrox&apos;s deterministic
-            engine is open-core — inspect the logic, audit the rules, deploy
+            engine is open-core - inspect the logic, audit the rules, deploy
             entirely within your perimeter. The Rust proxy is MIT-licensed;
             the heuristics are yours.
           </p>
@@ -218,9 +218,9 @@ export default function TrustModel() {
           </div>
         </div>
 
-        {/* RIGHT — fanned card stack (desktop) / vertical stack (mobile) */}
+        {/* RIGHT - fanned card stack (desktop) / vertical stack (mobile) */}
         <div className="w-full lg:w-1/2 lg:h-auto relative flex flex-col lg:block items-stretch lg:items-center justify-start lg:justify-center gap-6 lg:gap-0 mt-12 lg:mt-0">
-          {/* Card 3 — audit_log.json (bottom on desktop) */}
+          {/* Card 3 - audit_log.json (bottom on desktop) */}
           <div
             ref={card3Ref}
             className="lg:absolute w-full lg:w-[min(92vw,460px)] term-window-bone p-6 z-10"
@@ -258,7 +258,7 @@ export default function TrustModel() {
             </div>
           </div>
 
-          {/* Card 2 — heuristics.yaml (middle on desktop) */}
+          {/* Card 2 - heuristics.yaml (middle on desktop) */}
           <div
             ref={card2Ref}
             className="lg:absolute w-full lg:w-[min(92vw,460px)] term-window-bone p-6 z-20"
@@ -308,7 +308,7 @@ export default function TrustModel() {
             </div>
           </div>
 
-          {/* Card 1 — triage_engine.rs (top on desktop) */}
+          {/* Card 1 - triage_engine.rs (top on desktop) */}
           <div
             ref={card1Ref}
             className="lg:absolute w-full lg:w-[min(92vw,460px)] term-window-bone p-6 z-30"

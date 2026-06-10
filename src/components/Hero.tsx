@@ -38,7 +38,7 @@ export default function Hero() {
             isReduced?: boolean;
           };
 
-          // Reduced motion — just reveal everything in place
+          // Reduced motion - just reveal everything in place
           if (cond.isReduced) {
             gsap.set(
               [
@@ -173,7 +173,7 @@ export default function Hero() {
               "-=0.5"
             );
 
-          // Continuous cinematic breathing — DESKTOP ONLY.
+          // Continuous cinematic breathing - DESKTOP ONLY.
           // On mobile, every repaint of the wings re-runs the SVG blur
           // filter (or its CSS-disabled fallback) which still costs a
           // composite. Static wings are faster and visually fine on small
@@ -206,7 +206,7 @@ export default function Hero() {
             });
           }
 
-          // Subtle parallax on mouse — desktop only
+          // Subtle parallax on mouse - desktop only
           if (cond.isDesktop && wingsRef.current) {
             const wings = wingsRef.current;
             const onMove = (e: MouseEvent) => {
@@ -257,7 +257,7 @@ export default function Hero() {
       ref={containerRef}
       className="surface-void relative w-full min-h-[100svh] flex flex-col items-center justify-center overflow-hidden isolate"
     >
-      {/* Grain & grid texture — mix-blend-overlay tanks mobile GPU,
+      {/* Grain & grid texture - mix-blend-overlay tanks mobile GPU,
           the .mb-overlay class is stripped by the mobile media query. */}
       <div className="bg-grain mb-overlay pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-overlay z-0" />
       <div className="bg-grid-void pointer-events-none absolute inset-0 opacity-60 z-0" />
@@ -318,7 +318,7 @@ export default function Hero() {
               <stop offset="100%" stopColor="#3A0A03" stopOpacity="0" />
             </radialGradient>
             {/* Single blur pass + SourceGraphic overlay. The original used
-                14 + 4 stdDeviation in a feMerge with SourceGraphic — about
+                14 + 4 stdDeviation in a feMerge with SourceGraphic - about
                 3× the paint cost. This version keeps the sharp wing on top
                 of one halo pass, which reads identically on desktop and
                 lets the CSS .svg-filter-blur class disable it on mobile. */}
@@ -341,7 +341,7 @@ export default function Hero() {
             opacity="0.7"
           />
 
-          {/* LEFT WING — svg-filter-blur class lets CSS strip the blur on mobile */}
+          {/* LEFT WING - svg-filter-blur class lets CSS strip the blur on mobile */}
           <g ref={leftWing} filter="url(#wingBlur)" className="svg-filter-blur">
             <path d="M600,500 Q400,450 150,150 Q300,300 450,450 Z" fill="url(#fireGradLeft)" />
             <path d="M580,480 Q350,380 180,50 Q350,200 480,420 Z" fill="url(#fireGradLeft)" opacity="0.7" />
@@ -395,7 +395,7 @@ export default function Hero() {
           className="mt-10 max-w-[640px] text-balance text-[#E4DDC8]/75 font-body text-[clamp(1rem,1.4vw,1.2rem)] leading-[1.6]"
         >
           99.8% of EDR alerts are noise. Vyrox cuts through the chaos with
-          absolute precision — deterministic heuristics first, contextual
+          absolute precision - deterministic heuristics first, contextual
           reasoning second, human-in-the-loop for anything irreversible.
         </p>
 
