@@ -23,7 +23,7 @@ export default function Footer() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Scanner line — slow horizontal sweep
+        // Scanner line - slow horizontal sweep
         if (scannerRef.current) {
           gsap.fromTo(
             scannerRef.current,
@@ -38,7 +38,7 @@ export default function Footer() {
           );
         }
 
-        // Headline reveals — clip-path lifts
+        // Headline reveals - clip-path lifts
         gsap.set([headRef1.current, headRef2.current], {
           clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)",
           y: 80,
@@ -61,7 +61,7 @@ export default function Footer() {
         if (headRef1.current) splitText(headRef1.current, ["chars", "words"]);
         if (headRef2.current) splitText(headRef2.current, ["chars", "words"]);
 
-        // CTA button — magnetic on hover
+        // CTA button - magnetic on hover
         const cta = ctaRef.current;
         if (cta) {
           const onMove = (e: MouseEvent) => {
@@ -108,7 +108,7 @@ export default function Footer() {
       <div className="bg-grid-bone absolute inset-0 opacity-30 pointer-events-none" />
       <div className="bg-grain mb-multiply absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none" />
 
-      {/* Scanner line — top edge */}
+      {/* Scanner line - top edge */}
       <div className="absolute top-0 inset-x-0 h-px bg-[#0E0A05]/12">
         <div
           ref={scannerRef}
@@ -118,7 +118,7 @@ export default function Footer() {
       </div>
 
       <div className="relative z-10 w-full max-w-[1500px] mx-auto px-6 md:px-12 lg:px-20 pt-32 pb-32 flex flex-col xl:flex-row justify-between gap-20">
-        {/* LEFT — Editorial CTA headline */}
+        {/* LEFT - Editorial CTA headline */}
         <div className="flex flex-col w-full xl:w-[58%]">
           <div className="flex items-center gap-3 mb-12">
             <div className="flex gap-1">
@@ -158,7 +158,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* RIGHT — Terminal CTA */}
+        {/* RIGHT - Terminal CTA */}
         <div className="w-full xl:w-[40%] flex flex-col xl:items-end">
           <div className="w-full max-w-[460px]">
             <p className="eyebrow text-[#6B5E48] mb-4 text-left xl:text-right">

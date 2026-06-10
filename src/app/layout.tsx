@@ -25,11 +25,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vyrox — We extract the signal",
+  title: "Vyrox - We extract the signal",
   description:
     "Vyrox is an autonomous AI SOC analyst. 99.8% of alerts are noise. We cut through with absolute precision, delivering only actionable intelligence.",
   openGraph: {
-    title: "Vyrox — We extract the signal",
+    title: "Vyrox - We extract the signal",
     description:
       "Autonomous AI SOC. Deterministic heuristics, contextual triage, human-in-the-loop containment.",
     type: "website",

@@ -53,7 +53,7 @@ export default function BentoGrid() {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Magnetic hover — only attached on fine-pointer devices (see effect below)
+  // Magnetic hover - only attached on fine-pointer devices (see effect below)
   const onCardMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
     const rect = el.getBoundingClientRect();
@@ -124,7 +124,7 @@ export default function BentoGrid() {
             );
           }
 
-          // Card entrance — each card pops in as you scroll past it
+          // Card entrance - each card pops in as you scroll past it
           cardRefs.current.forEach((card, i) => {
             if (!card) return;
             gsap.set(card, { opacity: 0, y: 80, scale: 0.96 });
@@ -209,7 +209,7 @@ export default function BentoGrid() {
       <div className="bg-grid-bone absolute inset-0 opacity-40 pointer-events-none" />
       <div className="bg-grain mb-multiply absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none" />
 
-      {/* Section header — full bleed editorial */}
+      {/* Section header - full bleed editorial */}
       <div className="relative z-10 max-w-[1500px] mx-auto px-6 md:px-12 lg:px-20 pt-32 pb-20">
         <div className="flex items-center gap-3 mb-10">
           <Flame className="w-3.5 h-3.5 text-[#E8462E]" />
@@ -229,7 +229,7 @@ export default function BentoGrid() {
           <p className="max-w-[480px] text-[#2A2118]/75 leading-relaxed text-[clamp(0.95rem,1vw,1.05rem)]">
             Four stages, in order of decreasing certainty. Anything resolvable
             by code is. Anything resolvable by deterministic pattern is. Only
-            the irreducibly ambiguous reaches the LLM — and never the human
+            the irreducibly ambiguous reaches the LLM - and never the human
             until it has to.
           </p>
           <div className="hidden md:flex items-center gap-5 font-mono text-[10px] tracking-[0.22em] uppercase text-[#6B5E48]">
@@ -243,7 +243,7 @@ export default function BentoGrid() {
       </div>
 
       <div className="max-w-[1500px] mx-auto px-6 md:px-12 lg:px-20 flex flex-col md:flex-row gap-12 relative z-10">
-        {/* LEFT — sticky narrative (desktop only; on mobile each card
+        {/* LEFT - sticky narrative (desktop only; on mobile each card
             carries its own label so this would just waste a viewport). */}
         <div className="hidden md:block md:w-[40%] relative">
           <div className="sticky top-0 h-screen flex flex-col justify-center py-20 pr-6">
@@ -285,7 +285,7 @@ export default function BentoGrid() {
           </div>
         </div>
 
-        {/* CENTER — progress rail */}
+        {/* CENTER - progress rail */}
         <div className="hidden md:flex w-px relative flex-col items-center">
           <div className="absolute top-0 bottom-0 w-px bg-[#0E0A05]/15" />
           <div
@@ -295,12 +295,12 @@ export default function BentoGrid() {
           />
         </div>
 
-        {/* RIGHT — scrolling visual stages.
+        {/* RIGHT - scrolling visual stages.
             Mobile: tight stack (no sticky narrative to pair against).
             Desktop: each card gets its own viewport-height for the sticky
             narrative on the left to swap content. */}
         <div className="w-full md:w-[55%] py-12 md:py-[24vh] flex flex-col gap-12 md:gap-[60vh]">
-          {/* Card 01 — Ingestion */}
+          {/* Card 01 - Ingestion */}
           <div
             ref={setCardRef(0)}
             data-index="0"
@@ -346,7 +346,7 @@ export default function BentoGrid() {
             </div>
           </div>
 
-          {/* Card 02 — Heuristics */}
+          {/* Card 02 - Heuristics */}
           <div
             ref={setCardRef(1)}
             data-index="1"
@@ -384,7 +384,7 @@ export default function BentoGrid() {
             </div>
           </div>
 
-          {/* Card 03 — LLM Triage */}
+          {/* Card 03 - LLM Triage */}
           <div
             ref={setCardRef(2)}
             data-index="2"
@@ -433,7 +433,7 @@ export default function BentoGrid() {
             </div>
           </div>
 
-          {/* Card 04 — Human Override */}
+          {/* Card 04 - Human Override */}
           <div
             ref={setCardRef(3)}
             data-index="3"
@@ -486,7 +486,7 @@ export default function BentoGrid() {
         </div>
       </div>
 
-      {/* Section close — wide quote band */}
+      {/* Section close - wide quote band */}
       <div className="relative z-10 max-w-[1500px] mx-auto px-6 md:px-12 lg:px-20 py-32">
         <div className="border-t border-[#0E0A05]/15 pt-12 flex flex-col md:flex-row items-start gap-12">
           <span className="eyebrow text-[#6B5E48] shrink-0">Design Principle</span>

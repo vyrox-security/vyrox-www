@@ -3,7 +3,7 @@
  * Wraps each unit in a span so GSAP can target them individually.
  * Idempotent: rerunning on a split element is a no-op.
  *
- * Pure DOM construction (no innerHTML) — safe to use on user-rendered text.
+ * Pure DOM construction (no innerHTML) - safe to use on user-rendered text.
  */
 
 type SplitMode = "chars" | "words" | "lines";
