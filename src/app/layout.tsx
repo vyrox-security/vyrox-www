@@ -25,13 +25,13 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vyrox - We extract the signal",
+  title: "Vyrox · We extract the signal",
   description:
-    "Vyrox is an autonomous AI SOC analyst. 99.8% of alerts are noise. We cut through with absolute precision, delivering only actionable intelligence.",
+    "Vyrox is the autonomous, auditable action layer for security operations. We triage your EDR alerts, contain the real threats on your approval, and hand each client a tamper-evident record their auditor can verify.",
   openGraph: {
-    title: "Vyrox - We extract the signal",
+    title: "Vyrox · We extract the signal",
     description:
-      "Autonomous AI SOC. Deterministic heuristics, contextual triage, human-in-the-loop containment.",
+      "The auditable action layer for MSSPs. Deterministic triage, human-approved containment, and an owned, verifiable evidence pack for every client.",
     type: "website",
   },
 };

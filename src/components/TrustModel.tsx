@@ -188,10 +188,11 @@ export default function TrustModel() {
           <div className="w-16 h-px bg-[#0E0A05]/25 mb-8" />
 
           <p className="text-[#2A2118]/80 leading-[1.75] max-w-[440px] text-[clamp(0.95rem,1.05vw,1.1rem)]">
-            Black-box AI is a liability in the SOC. Vyrox&apos;s deterministic
-            engine is open-core - inspect the logic, audit the rules, deploy
-            entirely within your perimeter. The Rust proxy is MIT-licensed;
-            the heuristics are yours.
+            Black-box decisions are a liability in the SOC. Vyrox&apos;s
+            heuristics are inspectable, the Rust proxy is MIT-licensed, and
+            every action is written to an append-only, SHA-256 chained log. The
+            record you hand each client&apos;s auditor is tamper-evident since
+            generation and independently verifiable.
           </p>
 
           <div
@@ -200,7 +201,7 @@ export default function TrustModel() {
           >
             <BigStat value="100" suffix="%" label="Auditable logic" />
             <BigStat value="0" label="Hidden prompts" />
-            <BigStat value="14" suffix=" d" label="Mean integration" />
+            <BigStat value="10" suffix=" min" label="To first alert" />
           </div>
 
           <div className="mt-14 flex items-center gap-6 flex-wrap">

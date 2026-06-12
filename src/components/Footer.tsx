@@ -144,17 +144,17 @@ export default function Footer() {
           </h2>
 
           <p className="mt-14 text-[#2A2118]/80 text-[clamp(0.95rem,1.05vw,1.1rem)] max-w-[460px] leading-[1.75] border-l border-[#0E0A05]/20 pl-6">
-            Vyrox operates precisely where classical EDRs fail. Deploy
-            autonomously on-premise. Zero vendor lock-in. Zero black-box AI.
-            Your data never leaves your perimeter.
+            Vyrox acts on the alerts your EDR only reports, on your approval,
+            and proves every action with a record you own. One analyst covers
+            more clients. Every client gets evidence their auditor can verify.
           </p>
 
           <div className="mt-14 flex items-center gap-6 flex-wrap font-mono text-[10px] tracking-[0.24em] uppercase text-[#6B5E48]">
-            <span>v0.1 alpha</span>
+            <span>Early access</span>
             <span className="w-px h-3 bg-[#0E0A05]/20" />
-            <span>5 design partners onboarding</span>
+            <span>Now onboarding design partners</span>
             <span className="w-px h-3 bg-[#0E0A05]/20" />
-            <span>SOC2 Type I in progress</span>
+            <span>Evidence packs you own</span>
           </div>
         </div>
 
@@ -227,8 +227,8 @@ export default function Footer() {
           </div>
 
           <div className="flex-[2] flex flex-col md:flex-row">
-            <FooterCell label="Compliance" value="SOC2 Type I · in progress" />
-            <FooterCell label="Infrastructure" value="On-premise · air-gapped" />
+            <FooterCell label="Audit trail" value="Owned · SHA-256 chained" />
+            <FooterCell label="Containment proxy" value="Open source · MIT" />
             <FooterCell label="Disclosure" value="vyrox.dev/.well-known/security.txt" />
           </div>
 

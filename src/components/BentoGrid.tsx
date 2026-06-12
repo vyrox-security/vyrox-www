@@ -17,7 +17,7 @@ const features = [
     num: "01",
     title: "Ingestion Engine",
     description:
-      "Connect to your EDR via native APIs. Ingest millions of events per second with zero rate-limiting, buffering directly into hot storage.",
+      "Connect to the EDRs you already run via native APIs. Every alert is ingested, normalized, and queued per client tenant. Nothing dropped, nothing rate-limited.",
     accent: "#E8462E",
   },
   {
@@ -25,7 +25,7 @@ const features = [
     num: "02",
     title: "Deterministic Sub-system",
     description:
-      "Before AI touches anything, a Rust heuristics engine drops ~90% of known false positives. Conserves tokens. Kills alert fatigue.",
+      "Before any AI touches an alert, a Rust heuristics engine drops known false positives in under 5 ms. Conserves tokens. Kills alert fatigue.",
     accent: "#C9892F",
   },
   {
@@ -41,7 +41,7 @@ const features = [
     num: "04",
     title: "Human Override",
     description:
-      "Vyrox requires explicit human sign-off for catastrophic actions like host isolation. Slack and Discord integrations keep your team in command.",
+      "Vyrox requires explicit human sign-off for irreversible actions like host isolation. Approve in the console, and every action lands in the tamper-evident audit chain before it executes.",
     accent: "#0E0A05",
   },
 ];
@@ -229,13 +229,13 @@ export default function BentoGrid() {
           <p className="max-w-[480px] text-[#2A2118]/75 leading-relaxed text-[clamp(0.95rem,1vw,1.05rem)]">
             Four stages, in order of decreasing certainty. Anything resolvable
             by code is. Anything resolvable by deterministic pattern is. Only
-            the irreducibly ambiguous reaches the LLM - and never the human
+            the irreducibly ambiguous reaches the LLM, and never the human
             until it has to.
           </p>
           <div className="hidden md:flex items-center gap-5 font-mono text-[10px] tracking-[0.22em] uppercase text-[#6B5E48]">
             <span>4 stages</span>
             <span className="w-px h-3 bg-[#0E0A05]/20" />
-            <span>~12 ms p50</span>
+            <span>Sub-5 ms heuristics</span>
             <span className="w-px h-3 bg-[#0E0A05]/20" />
             <span>Rust + Python</span>
           </div>
@@ -393,7 +393,7 @@ export default function BentoGrid() {
           >
             <div className="absolute -top-3 left-6 flex items-center gap-2 bg-[#F2EAD8] px-3 font-mono text-[10px] tracking-[0.24em] uppercase text-[#6B5E48]">
               <BrainCircuit className="w-3 h-3" />
-              Reasoning · gpt-4o · 220 tok
+              Reasoning · 220 tok
             </div>
 
             <div className="h-full flex flex-col items-stretch justify-center gap-5 pt-3">
@@ -442,7 +442,7 @@ export default function BentoGrid() {
           >
             <div className="absolute -top-3 left-6 flex items-center gap-2 bg-[#F2EAD8] px-3 font-mono text-[10px] tracking-[0.24em] uppercase text-[#6B5E48]">
               <CheckCircle2 className="w-3 h-3" />
-              Approval · #soc-vyrox · 11:05 AM
+              Console · Approval · 11:05 AM
             </div>
 
             <div className="h-full flex flex-col items-stretch justify-center gap-4 pt-3">
