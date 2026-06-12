@@ -308,9 +308,9 @@ export default function NoiseVsSignal() {
           <h2
             ref={noiseHeadRef}
             className="display-tight text-gradient-smolder font-medium text-[clamp(1.6rem,7.4vw,8rem)] leading-[0.95] text-center px-2 select-none whitespace-nowrap"
-            aria-label="99.8% of alerts are noise"
+            aria-label="Most alerts are noise"
           >
-            99.8% of alerts are noise.
+            Most alerts are noise.
           </h2>
         </div>
 
@@ -366,8 +366,8 @@ export default function NoiseVsSignal() {
             className="mt-12 grid grid-cols-3 gap-6 md:gap-12 w-full max-w-[640px]"
           >
             <Stat label="Status" value="Signal Acquired" accent />
-            <Stat label="Latency" value="12 ms" />
-            <Stat label="False Pos." value="0.2%" />
+            <Stat label="Heuristics" value="Sub-5 ms" />
+            <Stat label="Every Action" value="Provable" />
           </div>
         </div>
 
@@ -382,11 +382,11 @@ export default function NoiseVsSignal() {
               <span key={i} className="px-8 inline-flex items-center gap-3">
                 Signal acquired
                 <span className="inline-block w-1.5 h-1.5 bg-[#E8462E] rounded-full" />
-                12 ms triage
+                Sub-5 ms heuristics
                 <span className="inline-block w-1.5 h-1.5 bg-[#E8462E] rounded-full" />
-                0.2% false positive
+                Every action provable
                 <span className="inline-block w-1.5 h-1.5 bg-[#E8462E] rounded-full" />
-                Zero black-box AI
+                You own the record
                 <span className="inline-block w-1.5 h-1.5 bg-[#E8462E] rounded-full" />
               </span>
             ))}

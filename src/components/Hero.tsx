@@ -371,7 +371,7 @@ export default function Hero() {
           className="eyebrow text-[#FFE6B0]/80 mb-10 flex items-center gap-3"
         >
           <span className="inline-block w-8 h-px bg-[#FFE6B0]/40" />
-          Autonomous SOC · v0.1 alpha
+          For MSSPs &amp; MDR Teams
           <span className="inline-block w-8 h-px bg-[#FFE6B0]/40" />
         </div>
 
@@ -394,9 +394,9 @@ export default function Hero() {
           ref={subtitleRef}
           className="mt-10 max-w-[640px] text-balance text-[#E4DDC8]/75 font-body text-[clamp(1rem,1.4vw,1.2rem)] leading-[1.6]"
         >
-          99.8% of EDR alerts are noise. Vyrox cuts through the chaos with
-          absolute precision - deterministic heuristics first, contextual
-          reasoning second, human-in-the-loop for anything irreversible.
+          One analyst, every client tenant. Vyrox triages the EDR alerts you
+          already manage, contains the real threats on your approval, and hands
+          each client a tamper-evident record their auditor can verify.
         </p>
 
         <div
@@ -418,8 +418,8 @@ export default function Hero() {
           className="absolute left-6 md:left-10 bottom-10 md:bottom-16 hidden md:flex flex-col gap-2 text-left font-mono text-[10px] tracking-[0.2em] uppercase text-[#F4EFE3]/40"
         >
           <span><span className="text-[#E8462E]">●</span>&nbsp;&nbsp;SIGNAL ACQUIRED</span>
-          <span>LAT&nbsp;12&nbsp;MS · FP&nbsp;0.2%</span>
-          <span>UPTIME 99.997</span>
+          <span>HEURISTICS&nbsp;·&nbsp;SUB-5&nbsp;MS</span>
+          <span>EVERY ACTION · PROVABLE</span>
         </div>
 
         <div className="absolute right-6 md:right-10 bottom-10 md:bottom-16 hidden md:flex flex-col items-end gap-2 font-mono text-[10px] tracking-[0.2em] uppercase text-[#F4EFE3]/40">
