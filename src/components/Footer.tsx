@@ -167,6 +167,10 @@ export default function Footer() {
 
             <button
               ref={ctaRef}
+              onClick={() => {
+                window.location.href =
+                  "mailto:hello@vyrox.dev?subject=Vyrox%20early%20access&body=Tell%20us%20about%20your%20team%20(MSSP%20or%20in-house)%20and%20which%20EDR%20you%20run%2C%20and%20we%27ll%20get%20you%20onboarded.";
+              }}
               className="group w-full relative bg-[#FBF6E7] hover:bg-white border border-[#0E0A05]/15 hover:border-[#E8462E]/60 transition-colors duration-500 p-6 md:p-8 flex flex-col items-start gap-6 outline-none shadow-[0_4px_30px_rgba(14,10,5,0.06)] hover:shadow-[0_12px_50px_rgba(232,70,46,0.18)]"
             >
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(232,70,46,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
