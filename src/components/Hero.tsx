@@ -3,249 +3,49 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import Image from "next/image";
 import { ArrowUpRight, Terminal } from "lucide-react";
-import { splitText } from "@/lib/text-split";
+import { QueueWindow } from "@/components/console";
+import TiltWindow from "@/components/TiltWindow";
 
 gsap.registerPlugin(useGSAP);
 
+const NAV = [
+  { href: "#engine", label: "Product" },
+  { href: "#features", label: "How it works" },
+  { href: "#security", label: "Security" },
+  { href: "#pricing", label: "Pricing" },
+  { href: "https://docs.vyrox.dev", label: "Docs" },
+];
+
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
-  const eyebrowRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const italicRef = useRef<HTMLSpanElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const metaRef = useRef<HTMLDivElement>(null);
-  const wingsRef = useRef<SVGSVGElement>(null);
-  const leftWing = useRef<SVGGElement>(null);
-  const rightWing = useRef<SVGGElement>(null);
-  const coreOrbRef = useRef<SVGCircleElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
+  const windowRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
 
-      mm.add(
-        {
-          isDesktop: "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
-          isMobile: "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
-          isReduced: "(prefers-reduced-motion: reduce)",
-        },
-        (ctx) => {
-          const cond = ctx.conditions as {
-            isDesktop?: boolean;
-            isMobile?: boolean;
-            isReduced?: boolean;
-          };
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const copyKids = copyRef.current?.children ? Array.from(copyRef.current.children) : [];
+        gsap.set(copyKids, { opacity: 0, y: 26 });
+        gsap.set(windowRef.current, { opacity: 0, y: 40 });
 
-          // Reduced motion - just reveal everything in place
-          if (cond.isReduced) {
-            gsap.set(
-              [
-                eyebrowRef.current,
-                headlineRef.current,
-                subtitleRef.current,
-                ctaRef.current,
-                metaRef.current,
-                wingsRef.current,
-              ],
-              { opacity: 1, y: 0, scale: 1, clearProps: "all" }
-            );
-            return;
-          }
+        const tl = gsap.timeline({ defaults: { ease: "expo.out" }, delay: 0.1 });
+        tl.to(copyKids, { opacity: 1, y: 0, duration: 0.9, stagger: 0.09 }).to(
+          windowRef.current,
+          { opacity: 1, y: 0, duration: 1.2 },
+          "-=0.7"
+        );
+      });
 
-          // Split the headline into chars for stagger
-          const headSplit = headlineRef.current
-            ? splitText(headlineRef.current, ["chars", "words"])
-            : null;
-          const italicSplit = italicRef.current
-            ? splitText(italicRef.current, ["chars", "words"])
-            : null;
-          const subSplit = subtitleRef.current
-            ? splitText(subtitleRef.current, ["words"])
-            : null;
-
-          // Initial states
-          gsap.set(wingsRef.current, {
-            opacity: 0,
-            scale: 0.78,
-            y: 60,
-            transformOrigin: "50% 70%",
-          });
-          gsap.set(leftWing.current, {
-            rotation: -22,
-            x: -40,
-            transformOrigin: "100% 100%",
-          });
-          gsap.set(rightWing.current, {
-            rotation: 22,
-            x: 40,
-            transformOrigin: "0% 100%",
-          });
-          gsap.set(coreOrbRef.current, { scale: 0, transformOrigin: "center" });
-
-          if (headSplit) gsap.set(headSplit.chars, { yPercent: 110, opacity: 0 });
-          if (italicSplit) gsap.set(italicSplit.chars, { yPercent: 110, opacity: 0 });
-          if (subSplit) gsap.set(subSplit.words, { yPercent: 60, opacity: 0 });
-          gsap.set(eyebrowRef.current, { opacity: 0, y: 16 });
-          gsap.set(ctaRef.current?.children ?? [], { opacity: 0, y: 24 });
-          gsap.set(metaRef.current?.children ?? [], { opacity: 0, x: -12 });
-
-          // Master timeline
-          const tl = gsap.timeline({
-            defaults: { ease: "expo.out" },
-            delay: 0.15,
-          });
-
-          tl.to(coreOrbRef.current, {
-            scale: 1,
-            duration: 1.4,
-            ease: "expo.out",
-          })
-            .to(
-              wingsRef.current,
-              { opacity: 1, scale: 1, y: 0, duration: 1.8, ease: "expo.out" },
-              "-=1.1"
-            )
-            .to(
-              [leftWing.current, rightWing.current],
-              { rotation: 0, x: 0, duration: 1.6, ease: "expo.out", stagger: 0.06 },
-              "-=1.5"
-            )
-            .to(
-              eyebrowRef.current,
-              { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
-              "-=1.3"
-            )
-            .to(
-              headSplit?.chars ?? [],
-              {
-                yPercent: 0,
-                opacity: 1,
-                duration: 1.1,
-                stagger: { each: 0.018, from: "start" },
-                ease: "expo.out",
-              },
-              "-=1.0"
-            )
-            .to(
-              italicSplit?.chars ?? [],
-              {
-                yPercent: 0,
-                opacity: 1,
-                duration: 1.1,
-                stagger: { each: 0.022, from: "start" },
-                ease: "expo.out",
-              },
-              "-=0.85"
-            )
-            .to(
-              subSplit?.words ?? [],
-              {
-                yPercent: 0,
-                opacity: 1,
-                duration: 0.9,
-                stagger: 0.018,
-                ease: "power3.out",
-              },
-              "-=0.6"
-            )
-            .to(
-              ctaRef.current?.children ?? [],
-              {
-                opacity: 1,
-                y: 0,
-                duration: 0.7,
-                stagger: 0.08,
-                ease: "expo.out",
-              },
-              "-=0.4"
-            )
-            .to(
-              metaRef.current?.children ?? [],
-              {
-                opacity: 1,
-                x: 0,
-                duration: 0.6,
-                stagger: 0.05,
-                ease: "power2.out",
-              },
-              "-=0.5"
-            );
-
-          // Continuous cinematic breathing - DESKTOP ONLY.
-          // On mobile, every repaint of the wings re-runs the SVG blur
-          // filter (or its CSS-disabled fallback) which still costs a
-          // composite. Static wings are faster and visually fine on small
-          // viewports where the wings are cropped anyway.
-          if (cond.isDesktop) {
-            gsap.to(leftWing.current, {
-              rotation: -2.5,
-              scaleY: 1.04,
-              yoyo: true,
-              repeat: -1,
-              duration: 5.5,
-              ease: "sine.inOut",
-              transformOrigin: "100% 100%",
-            });
-            gsap.to(rightWing.current, {
-              rotation: 2.5,
-              scaleY: 1.04,
-              yoyo: true,
-              repeat: -1,
-              duration: 5.5,
-              ease: "sine.inOut",
-              transformOrigin: "0% 100%",
-            });
-            gsap.to(coreOrbRef.current, {
-              scale: 1.08,
-              yoyo: true,
-              repeat: -1,
-              duration: 2.4,
-              ease: "sine.inOut",
-            });
-          }
-
-          // Subtle parallax on mouse - desktop only
-          if (cond.isDesktop && wingsRef.current) {
-            const wings = wingsRef.current;
-            const onMove = (e: MouseEvent) => {
-              const cx = window.innerWidth / 2;
-              const cy = window.innerHeight / 2;
-              const x = (e.clientX - cx) / cx;
-              const y = (e.clientY - cy) / cy;
-              gsap.to(wings, {
-                x: x * 18,
-                y: y * 10,
-                duration: 1.2,
-                ease: "power3.out",
-                overwrite: "auto",
-              });
-              gsap.to(leftWing.current, {
-                rotation: -1.5 + x * 1.2,
-                duration: 1.2,
-                ease: "power3.out",
-                overwrite: "auto",
-              });
-              gsap.to(rightWing.current, {
-                rotation: 1.5 + x * 1.2,
-                duration: 1.2,
-                ease: "power3.out",
-                overwrite: "auto",
-              });
-            };
-            window.addEventListener("mousemove", onMove, { passive: true });
-            return () => window.removeEventListener("mousemove", onMove);
-          }
-
-          // Cleanup splits on revert
-          return () => {
-            headSplit?.revert();
-            italicSplit?.revert();
-            subSplit?.revert();
-          };
-        }
-      );
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(
+          [...(copyRef.current?.children ? Array.from(copyRef.current.children) : []), windowRef.current],
+          { opacity: 1, y: 0 }
+        );
+      });
 
       return () => mm.revert();
     },
@@ -255,176 +55,115 @@ export default function Hero() {
   return (
     <section
       ref={containerRef}
-      className="surface-void relative w-full min-h-[100svh] flex flex-col items-center justify-center overflow-hidden isolate"
+      className="surface-void relative w-full min-h-[100svh] flex flex-col overflow-hidden isolate"
     >
-      {/* Grain & grid texture - mix-blend-overlay tanks mobile GPU,
-          the .mb-overlay class is stripped by the mobile media query. */}
-      <div className="bg-grain mb-overlay pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-overlay z-0" />
+      {/* Atmosphere: grid + grain + one ember glow */}
       <div className="bg-grid-void pointer-events-none absolute inset-0 opacity-60 z-0" />
+      <div className="bg-grain mb-overlay pointer-events-none absolute inset-0 opacity-[0.07] mix-blend-overlay z-0" />
+      <div
+        className="pointer-events-none absolute z-0"
+        style={{
+          top: "-12%",
+          right: "-15%",
+          width: "72%",
+          height: "92%",
+          background:
+            "radial-gradient(ellipse at center, rgba(232,70,46,0.22) 0%, rgba(232,70,46,0.05) 38%, transparent 70%)",
+        }}
+      />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#050505] to-transparent z-[1]" />
 
-      {/* Cinematic top + bottom vignettes */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-[#050505] to-transparent z-30" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent z-30" />
-
-      {/* Top nav rail */}
-      <header className="absolute top-0 inset-x-0 z-40 px-6 md:px-12 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-7 h-7 grid place-items-center bg-[#F2EAD8] text-[#0E0A05] font-mono font-bold text-[11px]">
-            V
-          </div>
-          <span className="font-mono text-[11px] tracking-[0.32em] uppercase text-[#F2EAD8]/70">
-            Vyrox / Signal Ops
-          </span>
-        </div>
-        <nav className="hidden md:flex items-center gap-9 font-mono text-[11px] tracking-[0.22em] uppercase text-[#F2EAD8]/55">
-          <a href="#engine" className="hover:text-[#FFE6B0] transition-colors">Engine</a>
-          <a href="#trust" className="hover:text-[#FFE6B0] transition-colors">Open-Core</a>
-          <a href="#docs" className="hover:text-[#FFE6B0] transition-colors">Docs</a>
-          <a
-            href="#access"
-            className="chip chip-ember hover:bg-[#E8462E]/10 transition-colors"
-          >
-            Request Access
+      {/* Transparent centered navbar - hero glow shows straight through */}
+      <header className="relative z-40 px-6 md:px-12 py-7">
+        <div className="max-w-[1500px] mx-auto grid grid-cols-[1fr_auto_1fr] items-center">
+          <a href="#" className="flex items-center gap-2.5 justify-self-start" aria-label="Vyrox Security home">
+            <Image
+              src="/vyrox-mark.png"
+              alt=""
+              width={581}
+              height={569}
+              priority
+              className="w-7 h-7 object-contain"
+            />
+            <span className="font-display font-bold text-[16px] sm:text-[17px] tracking-[-0.01em] text-[#F8F4EA] whitespace-nowrap">
+              Vyrox <span className="font-semibold text-[#F8F4EA]/55">Security</span>
+            </span>
           </a>
-        </nav>
+          <nav className="hidden lg:flex items-center gap-9 justify-self-center font-display font-bold text-[15px] tracking-[-0.005em] text-[#F4EFE3]/85">
+            {NAV.map((n) => (
+              <a key={n.href} href={n.href} className="hover:text-[#FFE6B0] transition-colors">
+                {n.label}
+              </a>
+            ))}
+          </nav>
+          <div className="justify-self-end flex items-center gap-4 md:gap-5">
+            <a
+              href="https://github.com/vyrox-security"
+              aria-label="Vyrox Security on GitHub"
+              className="hidden sm:inline-flex text-[#F4EFE3]/75 hover:text-[#FFE6B0] transition-colors"
+            >
+              <svg viewBox="0 0 16 16" width="21" height="21" fill="currentColor" aria-hidden="true">
+                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+              </svg>
+            </a>
+            <a
+              href="#access"
+              className="hidden sm:inline-flex items-center gap-2 px-4 py-2 font-display font-bold text-[14px] tracking-[-0.005em] text-[#FFE6B0] border border-[#E8462E]/50 hover:bg-[#E8462E]/12 transition-colors"
+            >
+              Request access
+            </a>
+          </div>
+        </div>
       </header>
 
-      {/* Abstract fire wings SVG */}
-      <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-        <svg
-          ref={wingsRef}
-          viewBox="0 0 1200 800"
-          className="mb-screen w-full min-w-[1100px] max-w-[1700px] h-auto opacity-[0.95] mix-blend-screen"
-          aria-hidden="true"
-        >
-          <defs>
-            <linearGradient id="fireGradLeft" x1="100%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#FFE6B0" stopOpacity="0.85" />
-              <stop offset="22%" stopColor="#FFB36A" stopOpacity="0.85" />
-              <stop offset="52%" stopColor="#FF6A3D" stopOpacity="0.7" />
-              <stop offset="80%" stopColor="#A82612" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#3A0A03" stopOpacity="0" />
-            </linearGradient>
-            <linearGradient id="fireGradRight" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#FFE6B0" stopOpacity="0.85" />
-              <stop offset="22%" stopColor="#FFB36A" stopOpacity="0.85" />
-              <stop offset="52%" stopColor="#FF6A3D" stopOpacity="0.7" />
-              <stop offset="80%" stopColor="#A82612" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#3A0A03" stopOpacity="0" />
-            </linearGradient>
-            <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#FFE6B0" stopOpacity="1" />
-              <stop offset="40%" stopColor="#E8462E" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="#3A0A03" stopOpacity="0" />
-            </radialGradient>
-            {/* Single blur pass + SourceGraphic overlay. The original used
-                14 + 4 stdDeviation in a feMerge with SourceGraphic - about
-                3× the paint cost. This version keeps the sharp wing on top
-                of one halo pass, which reads identically on desktop and
-                lets the CSS .svg-filter-blur class disable it on mobile. */}
-            <filter id="wingBlur" x="-25%" y="-25%" width="150%" height="150%">
-              <feGaussianBlur stdDeviation="12" result="halo" />
-              <feMerge>
-                <feMergeNode in="halo" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
+      {/* Hero body */}
+      <div className="relative z-20 flex-1 w-full max-w-[1500px] mx-auto px-6 md:px-12 lg:px-20 py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] gap-14 lg:gap-16 items-center">
+        <div ref={copyRef} className="flex flex-col">
+          <div className="eyebrow text-[#FFE6B0]/85 mb-8 flex items-center gap-3">
+            <span className="inline-block w-8 h-px bg-[#FFE6B0]/50" />
+            For MSSPs &amp; MDR teams
+          </div>
 
-          {/* Core orb */}
-          <circle
-            ref={coreOrbRef}
-            cx="600"
-            cy="500"
-            r="180"
-            fill="url(#coreGlow)"
-            opacity="0.7"
-          />
+          <h1 className="display-tight text-[#F8F4EA] font-medium text-[clamp(2.7rem,6vw,5.2rem)] leading-[0.92]">
+            One analyst.
+            <br />
+            Every client.
+            <br />
+            Every action{" "}
+            <span className="display-wonk italic text-gradient-ember">provable.</span>
+          </h1>
 
-          {/* LEFT WING - svg-filter-blur class lets CSS strip the blur on mobile */}
-          <g ref={leftWing} filter="url(#wingBlur)" className="svg-filter-blur">
-            <path d="M600,500 Q400,450 150,150 Q300,300 450,450 Z" fill="url(#fireGradLeft)" />
-            <path d="M580,480 Q350,380 180,50 Q350,200 480,420 Z" fill="url(#fireGradLeft)" opacity="0.7" />
-            <path d="M600,550 Q400,550 50,350 Q250,450 500,520 Z" fill="url(#fireGradLeft)" opacity="0.5" />
-            <path d="M600,500 Q450,460 300,250 Q400,350 500,470 Z" fill="#FFE6B0" opacity="0.55" />
-          </g>
+          <p className="mt-8 max-w-[520px] text-[#EBE5D6]/90 font-body text-[clamp(1.02rem,1.25vw,1.2rem)] leading-[1.65]">
+            Vyrox triages the EDR alerts your team already manages, contains the real threats on your
+            approval, and hands each client a tamper-evident record their auditor can verify.
+          </p>
 
-          {/* RIGHT WING */}
-          <g ref={rightWing} filter="url(#wingBlur)" className="svg-filter-blur">
-            <path d="M600,500 Q800,450 1050,150 Q900,300 750,450 Z" fill="url(#fireGradRight)" />
-            <path d="M620,480 Q850,380 1020,50 Q850,200 720,420 Z" fill="url(#fireGradRight)" opacity="0.7" />
-            <path d="M600,550 Q800,550 1150,350 Q950,450 700,520 Z" fill="url(#fireGradRight)" opacity="0.5" />
-            <path d="M600,500 Q750,460 900,250 Q800,350 700,470 Z" fill="#FFE6B0" opacity="0.55" />
-          </g>
-        </svg>
-      </div>
+          <div className="mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <a href="#access" className="btn-ember hover-lift group justify-center">
+              Request early access
+              <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+            <a href="#engine" className="btn-ghost hover-lift group justify-center">
+              <Terminal className="w-3.5 h-3.5" />
+              See it work
+            </a>
+          </div>
 
-      {/* Center vignette for text legibility */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-        <div className="w-[920px] h-[680px] bg-[radial-gradient(ellipse_at_center,rgba(5,5,5,0.85)_0%,rgba(5,5,5,0)_70%)]" />
-      </div>
-
-      {/* CONTENT */}
-      <div className="relative z-20 flex flex-col items-center text-center px-6 w-full max-w-6xl">
-        <div
-          ref={eyebrowRef}
-          className="eyebrow text-[#FFE6B0]/80 mb-10 flex items-center gap-3"
-        >
-          <span className="inline-block w-8 h-px bg-[#FFE6B0]/40" />
-          For MSSPs &amp; MDR Teams
-          <span className="inline-block w-8 h-px bg-[#FFE6B0]/40" />
+          <div className="mt-10 flex items-center gap-5 flex-wrap font-mono text-[11px] tracking-[0.16em] uppercase text-[#EBE5D6]/60">
+            <span><span className="text-[#E8462E]">●</span>&nbsp;&nbsp;Human-approved</span>
+            <span className="w-px h-3 bg-[#F4EFE3]/25" />
+            <span>SHA-256 audited</span>
+            <span className="w-px h-3 bg-[#F4EFE3]/25" />
+            <span>MIT open-core</span>
+          </div>
         </div>
 
-        <h1
-          ref={headlineRef}
-          className="display-tight text-[#F4EFE3] text-[clamp(3.5rem,11vw,11rem)] font-medium mb-1 overflow-hidden"
-        >
-          We extract
-        </h1>
-        <h1 className="display-tight text-[#F4EFE3] text-[clamp(3.5rem,11vw,11rem)] font-medium overflow-hidden -mt-3">
-          <span
-            ref={italicRef}
-            className="display-wonk text-gradient-ember italic"
-          >
-            the&nbsp;signal.
-          </span>
-        </h1>
-
-        <p
-          ref={subtitleRef}
-          className="mt-10 max-w-[640px] text-balance text-[#E4DDC8]/75 font-body text-[clamp(1rem,1.4vw,1.2rem)] leading-[1.6]"
-        >
-          One analyst, every client tenant. Vyrox triages the EDR alerts you
-          already manage, contains the real threats on your approval, and hands
-          each client a tamper-evident record their auditor can verify.
-        </p>
-
-        <div
-          ref={ctaRef}
-          className="mt-12 flex flex-col sm:flex-row items-center gap-4"
-        >
-          <a href="#access" className="btn-ember hover-lift group">
-            Request Early Access
-            <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
-          <a href="#engine" className="btn-ghost hover-lift group">
-            <Terminal className="w-3.5 h-3.5" />
-            See the Engine
-          </a>
-        </div>
-
-        <div
-          ref={metaRef}
-          className="absolute left-6 md:left-10 bottom-10 md:bottom-16 hidden md:flex flex-col gap-2 text-left font-mono text-[10px] tracking-[0.2em] uppercase text-[#F4EFE3]/40"
-        >
-          <span><span className="text-[#E8462E]">●</span>&nbsp;&nbsp;SIGNAL ACQUIRED</span>
-          <span>HEURISTICS&nbsp;·&nbsp;SUB-5&nbsp;MS</span>
-          <span>EVERY ACTION · PROVABLE</span>
-        </div>
-
-        <div className="absolute right-6 md:right-10 bottom-10 md:bottom-16 hidden md:flex flex-col items-end gap-2 font-mono text-[10px] tracking-[0.2em] uppercase text-[#F4EFE3]/40">
-          <span>SCROLL ↓</span>
-          <span className="w-px h-10 bg-gradient-to-b from-[#FFE6B0]/40 to-transparent" />
+        {/* Live console - cursor reactive */}
+        <div ref={windowRef} className="will-change-transform">
+          <TiltWindow>
+            <QueueWindow />
+          </TiltWindow>
+          <div className="absolute -bottom-5 left-8 right-8 h-10 bg-black/40 blur-2xl rounded-full -z-10" />
         </div>
       </div>
     </section>

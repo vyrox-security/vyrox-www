@@ -1,270 +1,174 @@
 "use client";
 
+import Image from "next/image";
 import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { ArrowUpRight, Activity, FileCode2 } from "lucide-react";
-import { splitText } from "@/lib/text-split";
+import { ArrowUpRight } from "lucide-react";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 }
 
+const MAILTO =
+  "mailto:hello@vyrox.dev?subject=Vyrox%20early%20access&body=Tell%20us%20about%20your%20team%20(MSSP%20or%20in-house)%20and%20which%20EDR%20you%20run%2C%20and%20we%27ll%20get%20you%20onboarded.";
+
+const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
+  {
+    title: "Product",
+    links: [
+      { label: "The Engine", href: "#engine" },
+      { label: "Evidence pack", href: "#features" },
+      { label: "Autonomy", href: "#features" },
+      { label: "Pricing", href: "#pricing" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "Security", href: "#security" },
+      { label: "Docs", href: "https://docs.vyrox.dev" },
+      { label: "GitHub", href: "https://github.com/vyrox-security" },
+      { label: "Disclosure", href: "https://vyrox.dev/.well-known/security.txt" },
+    ],
+  },
+  {
+    title: "Contact",
+    links: [
+      { label: "hello@vyrox.dev", href: "mailto:hello@vyrox.dev" },
+      { label: "security@vyrox.dev", href: "mailto:security@vyrox.dev" },
+    ],
+  },
+];
+
 export default function Footer() {
   const containerRef = useRef<HTMLElement>(null);
-  const headRef1 = useRef<HTMLDivElement>(null);
-  const headRef2 = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLButtonElement>(null);
-  const scannerRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
-
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Scanner line - slow horizontal sweep
-        if (scannerRef.current) {
-          gsap.fromTo(
-            scannerRef.current,
-            { left: "-10%" },
-            {
-              left: "110%",
-              duration: 4.5,
-              ease: "power2.inOut",
-              repeat: -1,
-              yoyo: true,
-            }
-          );
-        }
-
-        // Headline reveals - clip-path lifts
-        gsap.set([headRef1.current, headRef2.current], {
-          clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0 100%)",
-          y: 80,
-        });
-
-        gsap.to([headRef1.current, headRef2.current], {
-          clipPath: "polygon(0 0%, 100% 0%, 100% 100%, 0 100%)",
-          y: 0,
-          duration: 1.4,
-          ease: "expo.out",
-          stagger: 0.18,
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 70%",
-            toggleActions: "play none none reverse",
-          },
-        });
-
-        // Split the words inside the headlines for hover stagger
-        if (headRef1.current) splitText(headRef1.current, ["chars", "words"]);
-        if (headRef2.current) splitText(headRef2.current, ["chars", "words"]);
-
-        // CTA button - magnetic on hover
-        const cta = ctaRef.current;
-        if (cta) {
-          const onMove = (e: MouseEvent) => {
-            const rect = cta.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            gsap.to(cta, {
-              x: x * 0.08,
-              y: y * 0.12,
-              duration: 0.7,
-              ease: "power3.out",
-              overwrite: "auto",
-            });
-          };
-          const onLeave = () => {
-            gsap.to(cta, {
-              x: 0,
-              y: 0,
-              duration: 0.9,
-              ease: "expo.out",
-              overwrite: "auto",
-            });
-          };
-          cta.addEventListener("mousemove", onMove);
-          cta.addEventListener("mouseleave", onLeave);
-          return () => {
-            cta.removeEventListener("mousemove", onMove);
-            cta.removeEventListener("mouseleave", onLeave);
-          };
-        }
+        const kids = ctaRef.current?.children ? Array.from(ctaRef.current.children) : [];
+        gsap.fromTo(
+          kids,
+          { opacity: 0, y: 32 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "expo.out",
+            stagger: 0.1,
+            scrollTrigger: { trigger: ctaRef.current, start: "top 80%", toggleActions: "play none none reverse" },
+          }
+        );
       });
-
       return () => mm.revert();
     },
     { scope: containerRef }
   );
 
   return (
-    <footer
-      ref={containerRef}
-      id="access"
-      className="surface-bone relative w-full flex flex-col justify-between overflow-hidden text-[#0E0A05]"
-    >
-      <div className="bg-grid-bone absolute inset-0 opacity-30 pointer-events-none" />
-      <div className="bg-grain mb-multiply absolute inset-0 opacity-[0.06] mix-blend-multiply pointer-events-none" />
+    <footer id="access" ref={containerRef} className="surface-deep relative w-full overflow-hidden border-t border-white/[0.06]">
+      <div className="bg-grid-void absolute inset-0 opacity-40 pointer-events-none" />
+      <div
+        className="pointer-events-none absolute z-0"
+        style={{
+          top: "-30%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "80%",
+          height: "80%",
+          background: "radial-gradient(ellipse at center, rgba(232,70,46,0.16) 0%, transparent 65%)",
+        }}
+      />
 
-      {/* Scanner line - top edge */}
-      <div className="absolute top-0 inset-x-0 h-px bg-[#0E0A05]/12">
-        <div
-          ref={scannerRef}
-          className="absolute top-0 w-32 h-px bg-[#E8462E] shadow-[0_0_16px_#E8462E,-12px_0_24px_#E8462E]"
-          style={{ left: "-10%" }}
-        />
-      </div>
-
-      <div className="relative z-10 w-full max-w-[1500px] mx-auto px-6 md:px-12 lg:px-20 pt-32 pb-32 flex flex-col xl:flex-row justify-between gap-20">
-        {/* LEFT - Editorial CTA headline */}
-        <div className="flex flex-col w-full xl:w-[58%]">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="flex gap-1">
-              <span className="w-1.5 h-1.5 bg-[#E8462E] rounded-full" />
-              <span className="w-1.5 h-1.5 bg-[#0E0A05]/15 rounded-full" />
-              <span className="w-1.5 h-1.5 bg-[#0E0A05]/15 rounded-full" />
-            </div>
-            <span className="eyebrow text-[#6B5E48]">System Initialization</span>
-          </div>
-
-          <h2 className="display-tight font-medium text-[#0E0A05] leading-[0.85] text-[clamp(4rem,11vw,9rem)] uppercase">
-            <div ref={headRef1} className="overflow-hidden will-change-transform">
-              Stop the
-            </div>
-            <div
-              ref={headRef2}
-              className="overflow-hidden will-change-transform"
-            >
-              <span className="display-wonk italic text-gradient-ember lowercase tracking-tight">
-                noise.
-              </span>
-            </div>
-          </h2>
-
-          <p className="mt-14 text-[#2A2118]/80 text-[clamp(0.95rem,1.05vw,1.1rem)] max-w-[460px] leading-[1.75] border-l border-[#0E0A05]/20 pl-6">
-            Vyrox acts on the alerts your EDR only reports, on your approval,
-            and proves every action with a record you own. One analyst covers
-            more clients. Every client gets evidence their auditor can verify.
-          </p>
-
-          <div className="mt-14 flex items-center gap-6 flex-wrap font-mono text-[10px] tracking-[0.24em] uppercase text-[#6B5E48]">
-            <span>Early access</span>
-            <span className="w-px h-3 bg-[#0E0A05]/20" />
-            <span>Now onboarding design partners</span>
-            <span className="w-px h-3 bg-[#0E0A05]/20" />
-            <span>Evidence packs you own</span>
-          </div>
-        </div>
-
-        {/* RIGHT - Terminal CTA */}
-        <div className="w-full xl:w-[40%] flex flex-col xl:items-end">
-          <div className="w-full max-w-[460px]">
-            <p className="eyebrow text-[#6B5E48] mb-4 text-left xl:text-right">
-              Executable Payload
-            </p>
-
-            <button
-              ref={ctaRef}
-              onClick={() => {
-                window.location.href =
-                  "mailto:hello@vyrox.dev?subject=Vyrox%20early%20access&body=Tell%20us%20about%20your%20team%20(MSSP%20or%20in-house)%20and%20which%20EDR%20you%20run%2C%20and%20we%27ll%20get%20you%20onboarded.";
-              }}
-              className="group w-full relative bg-[#FBF6E7] hover:bg-white border border-[#0E0A05]/15 hover:border-[#E8462E]/60 transition-colors duration-500 p-6 md:p-8 flex flex-col items-start gap-6 outline-none shadow-[0_4px_30px_rgba(14,10,5,0.06)] hover:shadow-[0_12px_50px_rgba(232,70,46,0.18)]"
-            >
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(232,70,46,0.08)_0%,transparent_60%)] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-              <div className="w-full flex justify-between items-center text-[#6B5E48] font-mono text-[10px] tracking-[0.24em] uppercase">
-                <span>/bin/bash</span>
-                <Activity className="w-3.5 h-3.5 text-[#E8462E] opacity-50 group-hover:opacity-100 transition-opacity" />
-              </div>
-
-              <div className="font-mono text-[15px] md:text-[17px] text-left break-all text-[#2A2118]">
-                <span className="text-[#E8462E]">user@vyrox</span>
-                <span className="text-[#6B5E48]">:</span>
-                <span className="text-[#C9892F]">~</span>
-                <span className="text-[#6B5E48]">$</span>{" "}
-                <span className="text-[#0E0A05] group-hover:text-[#E8462E] transition-colors relative font-medium">
-                  ./request-early-access
-                  <span className="ml-1 inline-block w-2.5 h-4 bg-[#E8462E] opacity-0 group-hover:opacity-100 animate-pulse align-middle" />
-                </span>
-              </div>
-
-              <div className="w-full flex justify-between items-center mt-2 border-t border-[#0E0A05]/10 pt-4">
-                <span className="font-mono text-[10px] text-[#6B5E48] tracking-[0.24em] uppercase group-hover:text-[#E8462E] transition-colors">
-                  Execute Request
-                </span>
-                <ArrowUpRight className="w-5 h-5 text-[#6B5E48] group-hover:text-[#E8462E] group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300" />
-              </div>
-            </button>
-
-            <div className="flex items-center justify-between w-full mt-6 px-1">
-              <a
-                href="#docs"
-                className="group flex items-center gap-2 font-mono text-[10px] text-[#6B5E48] hover:text-[#0E0A05] transition-colors tracking-[0.24em] uppercase"
-              >
-                <FileCode2 className="w-3.5 h-3.5 text-[#6B5E48]/60 group-hover:text-[#E8462E] transition-colors" />
-                CLI Documentation
-              </a>
-              <a
-                href="mailto:security@vyrox.dev"
-                className="font-mono text-[10px] text-[#6B5E48] hover:text-[#E8462E] transition-colors tracking-[0.24em] uppercase"
-              >
-                security@vyrox.dev
-              </a>
-            </div>
-          </div>
+      {/* CTA band */}
+      <div ref={ctaRef} className="relative z-10 max-w-[1100px] mx-auto px-6 md:px-12 pt-32 pb-24 text-center flex flex-col items-center">
+        <span className="eyebrow text-[#FFE6B0]/80 mb-7">Now onboarding design partners</span>
+        <h2 className="display-tight font-medium text-[#F8F4EA] leading-[0.95] text-[clamp(2.6rem,7vw,5.5rem)] max-w-[15ch]">
+          Stop triaging alerts{" "}
+          <span className="display-wonk italic text-gradient-ember">one by one.</span>
+        </h2>
+        <p className="mt-8 max-w-[520px] text-[#EBE5D6]/85 text-[clamp(1rem,1.2vw,1.15rem)] leading-[1.6]">
+          Bring the EDRs you already run. We triage, you approve, and every client walks away with an
+          audit trail they own.
+        </p>
+        <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
+          <a href={MAILTO} className="btn-ember hover-lift group justify-center">
+            Request early access
+            <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </a>
+          <a href="https://github.com/vyrox-security" className="btn-ghost hover-lift group justify-center">
+            View on GitHub
+            <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </a>
         </div>
       </div>
 
-      {/* Brutalist footer rail */}
-      <div className="relative z-10 w-full border-t border-[#0E0A05]/15">
-        <div className="flex flex-col md:flex-row w-full max-w-[1500px] mx-auto">
-          <div className="flex-1 border-b md:border-b-0 md:border-r border-[#0E0A05]/15 p-7 flex items-center gap-4">
-            <div className="w-8 h-8 bg-[#0E0A05] text-[#F2EAD8] grid place-items-center font-display font-bold text-xs">
-              VY
-            </div>
-            <span className="font-mono text-[10px] text-[#6B5E48] tracking-[0.24em] uppercase">
-              © 2026 Vyrox Security
+      {/* Link columns */}
+      <div className="relative z-10 max-w-[1500px] mx-auto px-6 md:px-12 lg:px-20 border-t border-white/[0.07] py-16 grid grid-cols-2 md:grid-cols-[1.6fr_1fr_1fr_1fr] gap-10">
+        <div className="col-span-2 md:col-span-1 flex flex-col">
+          <div className="flex items-center gap-3 mb-5">
+            <Image
+              src="/vyrox-mark.png"
+              alt=""
+              width={581}
+              height={569}
+              className="w-8 h-8 object-contain"
+            />
+            <span className="font-mono text-[12px] tracking-[0.3em] uppercase text-[#F4EFE3]/85">
+              Vyrox Security
             </span>
           </div>
+          <p className="text-[#C9C6BD]/75 text-[14px] leading-[1.6] max-w-[280px]">
+            The autonomous, auditable action layer for security operations.
+          </p>
+          <span className="mt-5 inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase text-[#FFE6B0]/55 w-fit">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#E8462E] animate-pulse" />
+            MIT open-core proxy
+          </span>
+        </div>
 
-          <div className="flex-[2] flex flex-col md:flex-row">
-            <FooterCell label="Audit trail" value="Owned · SHA-256 chained" />
-            <FooterCell label="Containment proxy" value="Open source · MIT" />
-            <FooterCell label="Disclosure" value="vyrox.dev/.well-known/security.txt" />
+        {COLUMNS.map((col) => (
+          <div key={col.title} className="flex flex-col">
+            <span className="font-mono text-[10px] tracking-[0.24em] uppercase text-[#FFE6B0]/55 mb-5">
+              {col.title}
+            </span>
+            <ul className="flex flex-col gap-3">
+              {col.links.map((l) => (
+                <li key={l.label}>
+                  <a
+                    href={l.href}
+                    className="text-[14px] text-[#C9C6BD]/80 hover:text-[#FFE6B0] transition-colors"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
+        ))}
+      </div>
 
-          <div className="flex-1 p-7 flex items-center md:justify-end gap-6 bg-[#FBF6E7]/60">
-            <FooterLink href="https://github.com/vyrox-security">GitHub</FooterLink>
-            <FooterLink href="#docs">Docs</FooterLink>
-            <FooterLink href="#twitter">X</FooterLink>
-          </div>
+      {/* Bottom bar */}
+      <div className="relative z-10 max-w-[1500px] mx-auto px-6 md:px-12 lg:px-20 border-t border-white/[0.07] py-7 flex flex-col md:flex-row items-center justify-between gap-4">
+        <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-[#C9C6BD]/55">
+          © 2026 Vyrox Security
+        </span>
+        <span className="font-mono text-[11px] tracking-[0.18em] uppercase text-[#C9C6BD]/55">
+          Owned · SHA-256 chained audit trail
+        </span>
+        <div className="flex items-center gap-6 font-mono text-[11px] tracking-[0.18em] uppercase text-[#C9C6BD]/70">
+          <a href="https://github.com/vyrox-security" className="hover:text-[#FFE6B0] transition-colors">
+            GitHub
+          </a>
+          <a href="https://docs.vyrox.dev" className="hover:text-[#FFE6B0] transition-colors">
+            Docs
+          </a>
         </div>
       </div>
     </footer>
-  );
-}
-
-function FooterCell({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex-1 border-b md:border-b-0 md:border-r border-[#0E0A05]/15 p-7 flex flex-col justify-center gap-1.5">
-      <span className="font-mono text-[9px] text-[#6B5E48] uppercase tracking-[0.28em]">
-        {label}
-      </span>
-      <span className="font-display text-[13px] text-[#0E0A05]">{value}</span>
-    </div>
-  );
-}
-
-function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <a
-      href={href}
-      className="font-mono text-[10px] text-[#6B5E48] hover:text-[#E8462E] transition-colors tracking-[0.24em] uppercase"
-    >
-      {children}
-    </a>
   );
 }

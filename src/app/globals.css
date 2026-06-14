@@ -28,10 +28,10 @@
   --color-rust:     #8B2A12;
   --color-marrow:   #FFE6B0;     /* warm highlight */
 
-  /* Fonts */
-  --font-display: var(--font-display), "Cambria", "Times New Roman", serif;
-  --font-body:    var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  --font-mono:    var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  /* Fonts - Geist (body/UI) + Forma-style display grotesque + Geist Mono */
+  --font-display: var(--font-display-src), ui-sans-serif, system-ui, sans-serif;
+  --font-body:    var(--font-body-src), ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    var(--font-mono-src), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 @layer base {
@@ -104,19 +104,20 @@
 .font-body    { font-family: var(--font-body); }
 .font-mono    { font-family: var(--font-mono); font-feature-settings: "ss01", "ss02", "zero", "calt"; }
 
-/* Display weight modulation for variable serif */
+/* Emphasis word - display face, ember accent carries the emphasis */
 .display-wonk {
   font-family: var(--font-display);
-  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
-  font-style: italic;
-  font-weight: 400;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
+/* Tight display headings - heavy grotesque, negative tracking */
 .display-tight {
   font-family: var(--font-display);
-  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 0;
-  letter-spacing: -0.04em;
-  line-height: 0.88;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
 }
 
 /* Editorial small-caps label */
@@ -167,6 +168,34 @@
     var(--color-void);
 }
 
+/* Unified dark section surface (modern SaaS). Near-black with one soft ember
+   bloom at the top so sections separate by glow + hairline, not by colour. */
+.surface-deep {
+  background:
+    radial-gradient(ellipse 75% 50% at 50% -8%, rgba(232, 70, 46, 0.09) 0%, transparent 60%),
+    #07070a;
+  color: #f4efe3;
+}
+
+/* Elevated dark card / product window for the dark theme. */
+.card-deep {
+  background: #0d0f14;
+  border: 1px solid #232834;
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
+    0 30px 80px -30px rgba(0, 0, 0, 0.85);
+}
+.card-deep-hover {
+  transition: border-color 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
+}
+.card-deep-hover:hover {
+  border-color: rgba(232, 70, 46, 0.4);
+  box-shadow:
+    0 1px 0 0 rgba(255, 255, 255, 0.05) inset,
+    0 30px 80px -28px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(232, 70, 46, 0.18);
+}
+
 /* Diagonal cinema bars - editorial rule */
 .rule-diagonal {
   background-image: repeating-linear-gradient(
@@ -189,10 +218,10 @@
   gap: 0.65rem;
   padding: 0.95rem 1.6rem;
   background: var(--color-ember);
-  color: var(--color-bone);
+  color: #FFFFFF;
   font-family: var(--font-mono);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   border: 1px solid var(--color-ember);
@@ -201,9 +230,12 @@
   overflow: hidden;
   isolation: isolate;
   transition: transform 0.4s var(--ease-out-expo);
+  /* inset top highlight + warm ring + glow so it reads as a raised,
+     unmissable primary even over the busy fire backdrop. */
   box-shadow:
-    0 0 0 1px rgba(232, 70, 46, 0.0),
-    0 10px 30px -10px rgba(232, 70, 46, 0.5);
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 0 0 1px rgba(255, 138, 92, 0.35),
+    0 14px 34px -10px rgba(232, 70, 46, 0.6);
 }
 .btn-ember::before {
   content: "";
@@ -224,22 +256,26 @@
   align-items: center;
   gap: 0.65rem;
   padding: 0.95rem 1.6rem;
-  background: transparent;
+  /* faint frosted fill + a real border so the secondary reads as a button
+     over the fire wings, not a ghost lost in the noise. */
+  background: rgba(244, 239, 227, 0.06);
   color: var(--fg);
   font-family: var(--font-mono);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  border: 1px solid rgba(244, 239, 227, 0.25);
+  border: 1px solid rgba(244, 239, 227, 0.55);
   border-radius: 0;
   cursor: pointer;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   transition: border-color 0.4s var(--ease-out-expo), color 0.4s ease, background 0.4s ease;
 }
 .btn-ghost:hover {
   border-color: var(--color-marrow);
   color: var(--color-marrow);
-  background: rgba(255, 230, 176, 0.04);
+  background: rgba(255, 230, 176, 0.1);
 }
 
 .btn-ghost-bone {
@@ -415,6 +451,15 @@
   display: inline-flex;
   white-space: nowrap;
   animation: marquee 28s linear infinite;
+}
+
+/* Terminal caret - hard step blink for the live audit-log prompt */
+@keyframes caret-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.caret-blink {
+  animation: caret-blink 1.05s step-end infinite;
 }
 
 /* Scanline shimmer - used as accent */
