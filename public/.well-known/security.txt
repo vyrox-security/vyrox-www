@@ -6,6 +6,7 @@
 Contact: mailto:security@vyrox.dev
 Contact: https://github.com/vyrox-security/.github/security/advisories/new
 Encryption: https://vyrox.dev/.well-known/pgp-key.txt
+# Encryption key fingerprint: DCAC 9233 53AF 92F5 5985  A41D C566 CC30 EA65 16C2
 Preferred-Languages: en
 Canonical: https://www.vyrox.dev/.well-known/security.txt
 Canonical: https://vyrox.dev/.well-known/security.txt
