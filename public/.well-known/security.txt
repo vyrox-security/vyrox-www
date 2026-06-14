@@ -1,0 +1,13 @@
+# Vyrox Security — coordinated disclosure policy
+# If you have found a vulnerability, please tell us before you tell anyone else.
+# In scope: HMAC bypass, rate-limiter bypass, audit-log tampering, unapproved
+# execution, SQL injection, tenant-isolation breaks.
+
+Contact: mailto:security@vyrox.dev
+Contact: https://github.com/vyrox-security/.github/security/advisories/new
+Encryption: https://vyrox.dev/.well-known/pgp-key.txt
+Preferred-Languages: en
+Canonical: https://www.vyrox.dev/.well-known/security.txt
+Canonical: https://vyrox.dev/.well-known/security.txt
+Policy: https://github.com/vyrox-security/.github/blob/main/SECURITY.md
+Expires: 2027-06-14T00:00:00.000Z
